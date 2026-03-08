@@ -32,6 +32,8 @@ export type SearchResult = {
     runtimeEnvelopeHash: string | null;
     certificationLevel: AIConfigurationAtom["certificationLevel"];
     benchmarkScore: number;
+    publisherSummary: string | null;
+    pricingSummary: string | null;
   };
   rankingScore: number;
   score: number;
@@ -113,6 +115,8 @@ function mapRankedResult(ranked: ReturnType<typeof rankIntentionCandidates>[numb
       runtimeEnvelopeHash: ranked.candidate.bestConfiguration.runtimeEnvelopeHash ?? null,
       certificationLevel: ranked.candidate.bestConfiguration.certificationLevel,
       benchmarkScore: ranked.candidate.bestConfiguration.rankingSignals.benchmarkScore,
+      publisherSummary: ranked.candidate.bestConfiguration.publisherSummary ?? null,
+      pricingSummary: ranked.candidate.bestConfiguration.pricingSummary ?? null,
     },
     rankingScore: ranked.score,
     score: ranked.score,

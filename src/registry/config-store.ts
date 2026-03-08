@@ -17,6 +17,8 @@ export type AIConfigurationAtom = {
   certificationLevel: CertificationLevel;
   certificateId?: string | null;
   certificateRef?: string | null;
+  publisherSummary?: string | null;
+  pricingSummary?: string | null;
   status: ConfigurationStatus;
   rankingSignals: {
     benchmarkScore: number;
@@ -82,6 +84,8 @@ function normalizeConfiguration(input: AIConfigurationAtom): AIConfigurationAtom
   const runtimeEnvelopeHash = input.runtimeEnvelopeHash?.trim() || null;
   const certificateId = input.certificateId?.trim() || null;
   const certificateRef = input.certificateRef?.trim() || null;
+  const publisherSummary = input.publisherSummary?.trim() || null;
+  const pricingSummary = input.pricingSummary?.trim() || null;
 
   return {
     ...input,
@@ -92,6 +96,8 @@ function normalizeConfiguration(input: AIConfigurationAtom): AIConfigurationAtom
     certificationLevel: normalizeCertificationLevel(input.certificationLevel),
     certificateId,
     certificateRef,
+    publisherSummary,
+    pricingSummary,
     status: normalizeStatus(input.status),
     rankingSignals: {
       benchmarkScore: clampScore(input.rankingSignals.benchmarkScore),
@@ -175,6 +181,8 @@ export function createDefaultConfigurations(): AIConfigurationAtom[] {
       certificationLevel: "gold",
       certificateId: "CERT-101",
       certificateRef: "safeclash://certificates/CERT-101",
+      publisherSummary: "SafeClash Labs / Financial Cell",
+      pricingSummary: "usage-tier-A",
       status: "certified",
       rankingSignals: {
         benchmarkScore: 9.1,
@@ -195,6 +203,8 @@ export function createDefaultConfigurations(): AIConfigurationAtom[] {
       certificationLevel: "silver",
       certificateId: "CERT-118",
       certificateRef: "safeclash://certificates/CERT-118",
+      publisherSummary: "Independent Finance Studio",
+      pricingSummary: "usage-tier-A",
       status: "certified",
       rankingSignals: {
         benchmarkScore: 8.6,
@@ -215,6 +225,8 @@ export function createDefaultConfigurations(): AIConfigurationAtom[] {
       certificationLevel: "bronze",
       certificateId: "CERT-422",
       certificateRef: "safeclash://certificates/CERT-422",
+      publisherSummary: "Independent Finance Studio",
+      pricingSummary: "usage-tier-experimental",
       status: "candidate",
       rankingSignals: {
         benchmarkScore: 7.5,
@@ -235,6 +247,8 @@ export function createDefaultConfigurations(): AIConfigurationAtom[] {
       certificationLevel: "silver",
       certificateId: "CERT-205",
       certificateRef: "safeclash://certificates/CERT-205",
+      publisherSummary: "Balanced Growth Guild",
+      pricingSummary: "usage-tier-B",
       status: "certified",
       rankingSignals: {
         benchmarkScore: 8.4,
@@ -255,6 +269,8 @@ export function createDefaultConfigurations(): AIConfigurationAtom[] {
       certificationLevel: "silver",
       certificateId: "CERT-303",
       certificateRef: "safeclash://certificates/CERT-303",
+      publisherSummary: "Market Ops Collective",
+      pricingSummary: "usage-tier-C",
       status: "certified",
       rankingSignals: {
         benchmarkScore: 7.9,
@@ -275,6 +291,8 @@ export function createDefaultConfigurations(): AIConfigurationAtom[] {
       certificationLevel: "gold",
       certificateId: "CERT-401",
       certificateRef: "safeclash://certificates/CERT-401",
+      publisherSummary: "Health Safety Cell",
+      pricingSummary: "usage-tier-B",
       status: "certified",
       rankingSignals: {
         benchmarkScore: 8.8,
