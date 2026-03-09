@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://safeclash.dev/contracts/usage-atom.v1.json",
+  "title": "UsageAtomV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "atomId",
+    "configurationId",
+    "sessionId",
+    "agentId",
+    "channel",
+    "action",
+    "unitPriceMicros",
+    "quantity",
+    "currency",
+    "totalMicros",
+    "riskLevel",
+    "governanceRef",
+    "prevAtomHash",
+    "timestamp"
+  ],
+  "properties": {
+    "atomId": { "type": "string", "minLength": 1 },
+    "configurationId": { "type": "string", "minLength": 1 },
+    "sessionId": { "type": "string", "minLength": 1 },
+    "agentId": { "type": "string", "minLength": 1 },
+    "channel": { "type": "string", "minLength": 1 },
+    "action": { "type": "string", "minLength": 1 },
+    "unitPriceMicros": { "type": "integer", "minimum": 0 },
+    "quantity": { "type": "integer", "minimum": 1 },
+    "currency": {
+      "type": "string",
+      "enum": ["SAT", "USDC", "EUR", "USD"]
+    },
+    "totalMicros": { "type": "integer", "minimum": 0 },
+    "riskLevel": {
+      "type": "string",
+      "enum": ["low", "medium", "high"]
+    },
+    "governanceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["proposalId", "approvalId", "consentGranted", "policyDecision"],
+      "properties": {
+        "proposalId": { "type": ["string", "null"] },
+        "approvalId": { "type": ["string", "null"] },
+        "consentGranted": { "type": "boolean" },
+        "policyDecision": {
+          "type": "string",
+          "enum": ["green", "orange", "red", "never"]
+        }
+      }
+    },
+    "prevAtomHash": { "type": ["string", "null"] },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

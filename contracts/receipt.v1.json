@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://safeclash.dev/contracts/receipt.v1.json",
+  "title": "ReceiptV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "receiptId",
+    "atomId",
+    "configurationId",
+    "agentId",
+    "sessionId",
+    "channel",
+    "action",
+    "totalMicros",
+    "currency",
+    "decision",
+    "reason",
+    "atomHash",
+    "journalLine",
+    "certified",
+    "certificationLevel",
+    "timestamp"
+  ],
+  "properties": {
+    "receiptId": { "type": "string", "minLength": 1 },
+    "atomId": { "type": "string", "minLength": 1 },
+    "configurationId": { "type": "string", "minLength": 1 },
+    "agentId": { "type": "string", "minLength": 1 },
+    "sessionId": { "type": "string", "minLength": 1 },
+    "channel": { "type": "string", "minLength": 1 },
+    "action": { "type": "string", "minLength": 1 },
+    "totalMicros": { "type": "integer", "minimum": 0 },
+    "currency": { "type": "string", "minLength": 1 },
+    "decision": {
+      "type": "string",
+      "enum": ["green", "orange", "red", "never"]
+    },
+    "reason": { "type": "string" },
+    "atomHash": { "type": "string", "minLength": 1 },
+    "journalLine": {
+      "oneOf": [
+        { "type": "null" },
+        { "type": "integer", "minimum": 1 }
+      ]
+    },
+    "certified": { "type": "boolean" },
+    "certificationLevel": {
+      "type": "string",
+      "enum": ["none", "bronze", "silver", "gold", "platinum"]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
