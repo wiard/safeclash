@@ -47,6 +47,15 @@ export function verifyGapDiscoveryReceiptArtifacts(params: {
   if (capability.governanceAuthority !== "openclashd-v2") {
     errors.push("capability registry entry must remain subordinate to openclashd-v2");
   }
+  if (!capability.certification.attestationRequired) {
+    errors.push("capability registry entry must require attestations");
+  }
+  if (!capability.certification.receiptsRequired) {
+    errors.push("capability registry entry must require receipts");
+  }
+  if (capability.pricingHints.usageClass !== "governed_discovery") {
+    errors.push("capability registry entry must declare usageClass governed_discovery");
+  }
   if (
     capabilityEvidence.authorizedFollowUp.authority !== "openclashd-v2" ||
     capabilityEvidence.authorizedFollowUp.proposalId !== receipt.governanceRef.proposalId ||
@@ -62,6 +71,9 @@ export function verifyGapDiscoveryReceiptArtifacts(params: {
     errors.push("authorized follow-up class must exist in the capability registry");
   } else if (followUpClass.status !== "active") {
     errors.push("authorized follow-up class must be active");
+  }
+  if (capabilityEvidence.usageClass !== capability.pricingHints.usageClass) {
+    errors.push("receipt usageClass must match the capability registry usageClass");
   }
 
   const attestationsById = new Map(

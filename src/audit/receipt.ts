@@ -39,6 +39,7 @@ export type Receipt = {
   decision: "green" | "orange" | "red" | "never";
   reason: string;
   atomHash: string;
+  prevReceiptHash: string | null;
   journalLine: number | null;
   certified: boolean;
   certificationLevel: "none" | "bronze" | "silver" | "gold" | "platinum";
@@ -85,6 +86,7 @@ export function createReceipt(
   certificationLevel: Receipt["certificationLevel"],
   timestamp: string,
   capabilityEvidence?: ReceiptCapabilityEvidence | null,
+  prevReceiptHash: string | null = null,
 ): Receipt {
   const receiptId = createHash("sha256")
     .update(`${atom.atomId}:${decision}:${timestamp}`)
@@ -104,6 +106,7 @@ export function createReceipt(
     decision,
     reason,
     atomHash,
+    prevReceiptHash,
     journalLine,
     certified: decision === "green",
     certificationLevel,

@@ -17,6 +17,9 @@ export class ReceiptJournal {
   }
 
   append(receipt: Receipt): { hash: string } {
+    if (receipt.prevReceiptHash !== this.lastHash) {
+      throw new Error(`Chain broken: expected prevReceiptHash=${this.lastHash}, got ${receipt.prevReceiptHash}`);
+    }
     appendFileSync(this.path, `${JSON.stringify(receipt)}\n`, "utf-8");
     const hash = hashReceipt(receipt);
     this.lastHash = hash;
@@ -36,5 +39,17 @@ export class ReceiptJournal {
 
   getLastHash(): string | null {
     return this.lastHash;
+  }
+
+  verifyChain(): { valid: boolean; brokenAt: number | null } {
+    const receipts = this.readAll();
+    let prevHash: string | null = null;
+    for (let i = 0; i < receipts.length; i += 1) {
+      if (receipts[i].prevReceiptHash !== prevHash) {
+        return { valid: false, brokenAt: i };
+      }
+      prevHash = hashReceipt(receipts[i]);
+    }
+    return { valid: true, brokenAt: null };
   }
 }

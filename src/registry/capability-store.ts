@@ -44,6 +44,7 @@ export type CapabilityRegistryEntry = {
   certification: {
     minCertificationLevel: CertificationLevel;
     attestationRequired: boolean;
+    receiptsRequired: boolean;
     operatorVisible: boolean;
   };
   trustMetadata: TrustMetadata;
@@ -162,6 +163,7 @@ function normalizeCapability(input: CapabilityRegistryEntry): CapabilityRegistry
     certification: {
       minCertificationLevel: normalizeCertificationLevel(input.certification.minCertificationLevel),
       attestationRequired: Boolean(input.certification.attestationRequired),
+      receiptsRequired: Boolean(input.certification.receiptsRequired),
       operatorVisible: Boolean(input.certification.operatorVisible),
     },
     trustMetadata: normalizeTrustMetadata(input.trustMetadata),
@@ -273,6 +275,7 @@ export function createDefaultCapabilities(): CapabilityRegistryEntry[] {
       certification: {
         minCertificationLevel: "silver",
         attestationRequired: true,
+        receiptsRequired: true,
         operatorVisible: true,
       },
       trustMetadata: {

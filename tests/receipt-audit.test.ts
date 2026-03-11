@@ -180,6 +180,7 @@ test("Gap Discovery capability registry exposes governed certified capability", 
   assert.equal(capability.kind, "gap_discovery");
   assert.equal(capability.governanceAuthority, "openclashd-v2");
   assert.equal(capability.certification.attestationRequired, true);
+  assert.equal(capability.certification.receiptsRequired, true);
   assert.equal(capability.pricingHints.usageClass, "governed_discovery");
   assert.equal(capability.followUpClasses[0].kernelApprovalRequired, true);
   assert.equal(capability.trustMetadata.status, "trusted");
@@ -274,6 +275,43 @@ test("ReceiptJournal append + readAll round-trip", () => {
     assert.equal(rows.length, 1);
     assert.equal(rows[0].receiptId, receipt.receiptId);
     assert.equal(journal.getLastHash(), appendResult.hash);
+    assert.deepEqual(journal.verifyChain(), { valid: true, brokenAt: null });
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("ReceiptJournal append enforces receipt hash chain", () => {
+  const dir = mkdtempSync(join(tmpdir(), "safeclash-receipts-chain-"));
+  try {
+    const journal = new ReceiptJournal(join(dir, "receipts.jsonl"));
+    const atom = baseAtom();
+    const first = createReceipt(
+      atom,
+      "green",
+      "approved",
+      hashAtom(atom),
+      1,
+      "gold",
+      "2026-03-09T10:00:01.000Z",
+      null,
+      null,
+    );
+    const firstResult = journal.append(first);
+    const second = createReceipt(
+      atom,
+      "green",
+      "approved",
+      hashAtom(atom),
+      2,
+      "gold",
+      "2026-03-09T10:00:02.000Z",
+      null,
+      firstResult.hash,
+    );
+
+    journal.append(second);
+    assert.deepEqual(journal.verifyChain(), { valid: true, brokenAt: null });
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
