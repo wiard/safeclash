@@ -147,6 +147,40 @@ type SafeClashCertificateV1 = {
 4. merkle inclusion for sampled atom/receipt
 5. settlement totals consistency
 
+## 4a. Gap Discovery As A Certified Capability
+
+Gap Discovery is represented in SafeClash as a secure proof surface, not as an execution surface.
+
+- SafeClash registers the `GAP_DISCOVERY` capability family
+- SafeClash registers explicit follow-up classes such as `operator_review`, `proposal_brief`, and `knowledge_capture`
+- every follow-up class is marked `kernelApprovalRequired = true`
+- SafeClash issues attestations for certified `proposal_source` and `proposal_processor` subjects
+- SafeClash receipts may include:
+  - trust metadata
+  - capability and attestation references
+  - the explicitly authorized follow-up class
+  - the kernel proposal/approval linkage that made that follow-up legible
+
+What SafeClash proves:
+- the capability family exists
+- the capability and follow-up class status recorded by SafeClash
+- which follow-up class was authorized by the kernel
+- which receipt or attestation was issued
+- what trust metadata SafeClash attached to that capability or action evidence
+
+What SafeClash does not prove:
+- that a follow-up is approved without kernel evidence
+- that an attested processor may execute autonomously
+- that certification can replace human approval
+
+### openclashd-v2 verification path
+1. Require `proposalId` and `approvalId` on the SafeClash receipt.
+2. Resolve the `GAP_DISCOVERY` registry entry and ensure its `governanceAuthority` is `openclashd-v2`.
+3. Resolve the referenced follow-up class and ensure it is active and still marked `kernelApprovalRequired`.
+4. Resolve the referenced source and processor attestations and ensure they are active, trusted, and scoped to the same follow-up class.
+5. Match the receipt authorization fields back to the same kernel approval carried by the receipt.
+6. Continue kernel policy evaluation; SafeClash trust artifacts never substitute for approval.
+
 ## 5. Minimal Runtime Module Layout (TypeScript / Node / pnpm)
 
 Use this as the first non-trivial runtime skeleton:
