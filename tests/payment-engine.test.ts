@@ -176,3 +176,90 @@ test("Deterministic: same sequence -> same results", () => {
   const second = runSequence();
   assert.deepEqual(first, second);
 });
+
+test("security_remediation requires explicit approval_decision", () => {
+  const harness = createHarness();
+  try {
+    const result = harness.engine.process(
+      baseRequest({
+        capability: "security_remediation",
+        proposalId: "PROP-SEC-1",
+        securitySignalId: "SIG-SEC-1",
+        remediationApplied: "rotate credential",
+      }),
+    );
+
+    assert.equal(result.accepted, false);
+    assert.equal(result.decision, "never");
+    assert.equal(result.reason, "approval_decision_required");
+    assert.equal(result.statusCode, 403);
+    assert.equal(result.executionReceipt, null);
+    assert.equal(harness.journal.readAll().length, 1);
+  } finally {
+    rmSync(harness.dir, { recursive: true, force: true });
+  }
+});
+
+test("security_remediation rejects auto-remediation", () => {
+  const harness = createHarness();
+  try {
+    const result = harness.engine.process(
+      baseRequest({
+        capability: "security_remediation",
+        proposalId: "PROP-SEC-2",
+        securitySignalId: "SIG-SEC-2",
+        remediationApplied: "patch dependency",
+        autoRemediation: true,
+        approvalDecision: {
+          decision: "approve",
+          actor: "operator@jeeves",
+          reason: "reviewed and approved",
+          timestamp: "2026-03-12T12:00:00.000Z",
+        },
+      }),
+    );
+
+    assert.equal(result.accepted, false);
+    assert.equal(result.decision, "never");
+    assert.equal(result.reason, "auto_remediation_forbidden");
+    assert.equal(result.statusCode, 403);
+    assert.equal(result.executionReceipt, null);
+  } finally {
+    rmSync(harness.dir, { recursive: true, force: true });
+  }
+});
+
+test("approved security_remediation produces execution_receipt", () => {
+  const harness = createHarness();
+  try {
+    const result = harness.engine.process(
+      baseRequest({
+        capability: "security_remediation",
+        proposalId: "PROP-SEC-3",
+        securitySignalId: "SIG-SEC-3",
+        remediationApplied: "revoke leaked token",
+        approvalDecision: {
+          decision: "approve",
+          actor: "operator@jeeves",
+          reason: "confirmed exposure path",
+          timestamp: "2026-03-12T12:05:00.000Z",
+        },
+      }),
+    );
+
+    assert.equal(result.accepted, true);
+    assert.equal(result.decision, "green");
+    assert.equal(result.reason, "security_remediation_approved");
+    assert.equal(result.statusCode, 200);
+    assert.ok(result.executionReceipt);
+    assert.equal(result.executionReceipt?.proposal_id, "PROP-SEC-3");
+    assert.equal(result.executionReceipt?.capability, "security_remediation");
+    assert.equal(result.executionReceipt?.security_signal_id, "SIG-SEC-3");
+    assert.equal(result.executionReceipt?.remediation_applied, "revoke leaked token");
+    assert.equal(result.executionReceipt?.approved_by, "operator@jeeves");
+    assert.equal(result.executionReceipt?.timestamp, "2026-03-09T10:00:00.000Z");
+    assert.equal(harness.journal.readAll().length, 1);
+  } finally {
+    rmSync(harness.dir, { recursive: true, force: true });
+  }
+});
