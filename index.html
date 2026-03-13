@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SafeClash — Trust, Billing, Certification</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #080c0a;
+      --paper: #eef2ee;
+      --green: #2e7d4f;
+      --green-bright: #4caf78;
+      --green-dim: #1a4a2e;
+      --rule: #1a2a1e;
+      --muted: #5a7060;
+      --code-bg: #0a120d;
+      --serif: 'EB Garamond', Georgia, serif;
+      --mono: 'JetBrains Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ink);
+      color: var(--paper);
+      font-family: var(--serif);
+      font-size: 18px;
+      line-height: 1.75;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 1.4rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(46,125,79,0.2);
+      background: rgba(8,12,10,0.9);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+    }
+
+    .nav-brand {
+      color: var(--green-bright);
+      letter-spacing: 0.12em;
+      font-weight: 400;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      color: var(--muted);
+    }
+
+    .nav-right a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav-right a:hover { color: var(--green-bright); }
+
+    .trust-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--green-bright);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+    }
+
+    .trust-badge::before {
+      content: '✓';
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border: 1px solid var(--green-bright);
+      font-size: 0.6rem;
+      border-radius: 50%;
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 0 3rem;
+      gap: 4rem;
+      border-bottom: 1px solid var(--rule);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 1px;
+      height: 100%;
+      background: linear-gradient(to bottom, transparent, rgba(46,125,79,0.2), transparent);
+    }
+
+    .hero-left {
+      padding-top: 4rem;
+      animation: fadeUp 1s ease both;
+    }
+
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      color: var(--green-bright);
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .eyebrow::before {
+      content: '';
+      display: block;
+      width: 2rem;
+      height: 1px;
+      background: var(--green-bright);
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-size: clamp(2.6rem, 4.5vw, 4rem);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 2rem;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--green-bright);
+    }
+
+    .hero-body {
+      font-size: 1.05rem;
+      color: #9ab8a0;
+      max-width: 44ch;
+      line-height: 1.8;
+    }
+
+    /* RECEIPT VISUAL */
+    .receipt-visual {
+      animation: fadeUp 1.2s ease 0.2s both;
+      padding-top: 4rem;
+    }
+
+    .receipt-card {
+      border: 1px solid rgba(46,125,79,0.4);
+      background: var(--code-bg);
+      padding: 2rem;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      position: relative;
+    }
+
+    .receipt-card::before {
+      content: 'RECEIPT — CERTIFIED';
+      position: absolute;
+      top: -0.6rem;
+      left: 1.5rem;
+      background: var(--ink);
+      padding: 0 0.5rem;
+      color: var(--green-bright);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+    }
+
+    .receipt-row {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 0.3rem 1rem;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid rgba(46,125,79,0.1);
+      align-items: baseline;
+    }
+
+    .receipt-row:last-child { border: none; }
+
+    .receipt-key { color: var(--muted); }
+    .receipt-val { color: var(--paper); }
+    .receipt-val.green { color: var(--green-bright); }
+    .receipt-val.dim { color: var(--muted); font-size: 0.68rem; }
+
+    .receipt-seal {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(46,125,79,0.3);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .seal-icon {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--green-bright);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--green-bright);
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .seal-text { font-size: 0.68rem; color: var(--muted); }
+    .seal-text strong { color: var(--green-bright); display: block; }
+
+    /* SECTIONS */
+    section {
+      padding: 7rem 3rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      color: var(--green-bright);
+      text-transform: uppercase;
+      margin-bottom: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 2rem;
+      height: 1px;
+      background: var(--green-bright);
+    }
+
+    h2 {
+      font-family: var(--serif);
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+    }
+
+    p {
+      color: #9ab8a0;
+      max-width: 64ch;
+      margin-bottom: 1.2rem;
+      line-height: 1.8;
+    }
+
+    /* THREE PILLARS */
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      margin-top: 4rem;
+    }
+
+    .pillar {
+      padding: 3rem 2.5rem;
+      border: 1px solid var(--rule);
+      margin-right: -1px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+
+    .pillar:hover { border-color: rgba(46,125,79,0.4); }
+
+    .pillar::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(46,125,79,0.05), transparent);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .pillar:hover::before { opacity: 1; }
+
+    .pillar-icon {
+      font-family: var(--mono);
+      font-size: 1.8rem;
+      color: var(--green-bright);
+      margin-bottom: 1.5rem;
+      opacity: 0.7;
+    }
+
+    .pillar-title {
+      font-family: var(--serif);
+      font-size: 1.4rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      color: var(--paper);
+    }
+
+    .pillar-body {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* HOW IT WORKS */
+    .flow-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+      align-items: center;
+      gap: 0;
+      margin-top: 4rem;
+    }
+
+    .flow-box {
+      padding: 2rem 1.5rem;
+      border: 1px solid var(--rule);
+      text-align: center;
+      transition: border-color 0.3s;
+    }
+
+    .flow-box:hover { border-color: rgba(46,125,79,0.4); }
+
+    .flow-box.safeclash {
+      border-color: rgba(46,125,79,0.5);
+      background: rgba(46,125,79,0.05);
+    }
+
+    .flow-box-label {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .flow-box-title {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      color: var(--paper);
+    }
+
+    .flow-box.safeclash .flow-box-label { color: var(--green-bright); }
+    .flow-box.safeclash .flow-box-title { color: var(--green-bright); }
+
+    .flow-connector {
+      font-family: var(--mono);
+      color: var(--green-dim);
+      font-size: 1.2rem;
+      padding: 0 0.5rem;
+      text-align: center;
+    }
+
+    /* ATOMS TABLE */
+    .atoms-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      margin-top: 3rem;
+    }
+
+    .atoms-table th {
+      text-align: left;
+      padding: 0.8rem 1.2rem;
+      border: 1px solid var(--rule);
+      color: var(--green-bright);
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      font-size: 0.62rem;
+      text-transform: uppercase;
+    }
+
+    .atoms-table td {
+      padding: 0.9rem 1.2rem;
+      border: 1px solid var(--rule);
+      color: var(--muted);
+      vertical-align: top;
+    }
+
+    .atoms-table td:first-child { color: var(--paper); }
+    .atoms-table tr:hover td { background: rgba(46,125,79,0.03); }
+
+    /* MERKLE */
+    .merkle-section {
+      background: rgba(46,125,79,0.02);
+    }
+
+    .merkle-visual {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+      background: var(--code-bg);
+      border: 1px solid var(--rule);
+      border-left: 2px solid var(--green-dim);
+      padding: 2rem;
+      margin-top: 3rem;
+      line-height: 2;
+    }
+
+    .merkle-visual .green { color: var(--green-bright); }
+    .merkle-visual .dim { color: #2a3a2e; }
+
+    /* PRICING */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      margin-top: 4rem;
+    }
+
+    .price-card {
+      padding: 3rem 2.5rem;
+      border: 1px solid var(--rule);
+      margin-right: -1px;
+      transition: border-color 0.3s;
+    }
+
+    .price-card:hover { border-color: rgba(46,125,79,0.4); }
+
+    .price-card.featured {
+      border-color: rgba(46,125,79,0.5);
+      background: rgba(46,125,79,0.04);
+    }
+
+    .price-tier {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--green-bright);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .price-name {
+      font-family: var(--serif);
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: var(--paper);
+      margin-bottom: 0.5rem;
+    }
+
+    .price-amount {
+      font-family: var(--mono);
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .price-amount span { color: var(--green-bright); font-size: 1.2rem; }
+
+    .price-features {
+      list-style: none;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .price-features li {
+      padding: 0.4rem 0;
+      display: flex;
+      gap: 0.8rem;
+      align-items: baseline;
+    }
+
+    .price-features li::before {
+      content: '✓';
+      color: var(--green-bright);
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      flex-shrink: 0;
+    }
+
+    /* ECOSYSTEM ROW */
+    .ecosystem-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-top: 4rem;
+    }
+
+    .eco-item {
+      padding: 2rem;
+      border: 1px solid var(--rule);
+      margin-right: -1px;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.3s;
+    }
+
+    .eco-item:hover { border-color: rgba(46,125,79,0.4); }
+    .eco-item.current { border-color: rgba(46,125,79,0.5); background: rgba(46,125,79,0.04); }
+
+    .eco-role { color: var(--muted); font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .eco-domain { color: var(--green-bright); margin-bottom: 0.3rem; }
+    .eco-desc { color: var(--muted); font-size: 0.65rem; line-height: 1.5; }
+
+    /* FOOTER */
+    footer {
+      padding: 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+    }
+
+    footer a { color: var(--green-dim); text-decoration: none; transition: color 0.2s; }
+    footer a:hover { color: var(--green-bright); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* MOBILE */
+    @media (max-width: 900px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .hero { grid-template-columns: 1fr; padding: 7rem 1.5rem 4rem; }
+      section { padding: 5rem 1.5rem; }
+      .pillars, .pricing-grid, .ecosystem-row { grid-template-columns: 1fr; }
+      .pillar, .price-card, .eco-item { margin-right: 0; margin-bottom: -1px; }
+      .flow-grid { grid-template-columns: 1fr; }
+      .flow-connector { transform: rotate(90deg); }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">SAFECLASH</div>
+  <div class="nav-right">
+    <div class="trust-badge">Certified Governance Layer</div>
+    <a href="https://governedaios.com">Governed AI OS</a>
+    <a href="https://openclashd.com">OpenClashd</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" style="border-bottom: 1px solid var(--rule); padding-top: 0;">
+  <div class="hero-left">
+    <div class="eyebrow">Trust · Billing · Certification</div>
+    <h1>Every approved action<br>leaves a <em>verified</em> trail</h1>
+    <p class="hero-body">
+      SafeClash is the bookkeeper and certifier of the Governed AI OS. It does not make decisions. It records them — with cryptographic precision, Merkle-anchored audit trails, and usage receipts that cannot be disputed.
+    </p>
+  </div>
+
+  <div class="receipt-visual">
+    <div class="receipt-card">
+      <div class="receipt-row">
+        <span class="receipt-key">receipt_id</span>
+        <span class="receipt-val dim">sc_7f3a91b4c2d8e...</span>
+      </div>
+      <div class="receipt-row">
+        <span class="receipt-key">proposal_id</span>
+        <span class="receipt-val dim">prop_4a2c1f8b...</span>
+      </div>
+      <div class="receipt-row">
+        <span class="receipt-key">action</span>
+        <span class="receipt-val">restart_node</span>
+      </div>
+      <div class="receipt-row">
+        <span class="receipt-key">outcome</span>
+        <span class="receipt-val green">executed</span>
+      </div>
+      <div class="receipt-row">
+        <span class="receipt-key">approval</span>
+        <span class="receipt-val green">A = 1</span>
+      </div>
+      <div class="receipt-row">
+        <span class="receipt-key">decided_by</span>
+        <span class="receipt-val">professor_vasen</span>
+      </div>
+      <div class="receipt-row">
+        <span class="receipt-key">usage_atoms</span>
+        <span class="receipt-val">14 atoms · 0.00042 sat</span>
+      </div>
+      <div class="receipt-row">
+        <span class="receipt-key">merkle_root</span>
+        <span class="receipt-val dim">a9f3c2b1d4e8...</span>
+      </div>
+      <div class="receipt-row">
+        <span class="receipt-key">sealed_at</span>
+        <span class="receipt-val dim">2026-03-13T09:14:22Z</span>
+      </div>
+      <div class="receipt-seal">
+        <div class="seal-icon">✓</div>
+        <div class="seal-text">
+          <strong>SafeClash Certified</strong>
+          This receipt is immutable. The human approved. The action executed. The record is sealed.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THREE PILLARS -->
+<section class="reveal">
+  <div class="section-label">What SafeClash does</div>
+  <h2>Three functions. One purpose.</h2>
+  <div class="pillars">
+    <div class="pillar">
+      <div class="pillar-icon">⬡</div>
+      <div class="pillar-title">Trust layer</div>
+      <div class="pillar-body">SafeClash certifies that every action in the system was approved by a human. Not claimed — cryptographically verified. The certificate is the proof.</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">◈</div>
+      <div class="pillar-title">Billing layer</div>
+      <div class="pillar-body">Usage is measured in atoms — the smallest meaningful unit of computation. Every approved action generates a receipt with an atom count. Payment is the continuity guarantee: π in the formula.</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">◉</div>
+      <div class="pillar-title">Certification mark</div>
+      <div class="pillar-body">Systems that implement the Governed AI OS protocol can apply for SafeClash certification. The mark means one thing: no action in this system executes without human approval.</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="reveal">
+  <div class="section-label">Position in the system</div>
+  <h2>SafeClash sits at the end of the canonical loop</h2>
+  <p>OpenClashd owns consent. CLASHD27 owns discovery. Jeeves owns the approval surface. SafeClash owns what comes after: the record, the bill, the proof.</p>
+
+  <div class="flow-grid">
+    <div class="flow-box">
+      <div class="flow-box-label">Signal</div>
+      <div class="flow-box-title">OpenClashGrid</div>
+    </div>
+    <div class="flow-connector">→</div>
+    <div class="flow-box">
+      <div class="flow-box-label">Govern</div>
+      <div class="flow-box-title">OpenClashd</div>
+    </div>
+    <div class="flow-connector">→</div>
+    <div class="flow-box">
+      <div class="flow-box-label">Approve</div>
+      <div class="flow-box-title">Jeeves</div>
+    </div>
+    <div class="flow-connector">→</div>
+    <div class="flow-box safeclash">
+      <div class="flow-box-label">Certify</div>
+      <div class="flow-box-title">SafeClash</div>
+    </div>
+  </div>
+</section>
+
+<!-- USAGE ATOMS -->
+<section class="merkle-section reveal">
+  <div class="section-label">Billing model</div>
+  <h2>Usage atoms — not tokens, not requests</h2>
+  <p>A usage atom is the smallest billable unit of governed computation. One atom = one meaningful action that passed through the policy gate. Atoms are counted per proposal, not per API call.</p>
+
+  <table class="atoms-table">
+    <thead>
+      <tr>
+        <th>Event</th>
+        <th>Atoms</th>
+        <th>Billed when</th>
+        <th>Includes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Signal observed</td>
+        <td>0</td>
+        <td>Never</td>
+        <td>Observation is always free</td>
+      </tr>
+      <tr>
+        <td>Proposal created</td>
+        <td>1</td>
+        <td>On creation</td>
+        <td>Policy gate, residue calculation</td>
+      </tr>
+      <tr>
+        <td>Correlated proposal</td>
+        <td>3</td>
+        <td>On creation</td>
+        <td>Multi-node correlation, entropy calculation</td>
+      </tr>
+      <tr>
+        <td>Action executed (A=1)</td>
+        <td>5–20</td>
+        <td>On execution</td>
+        <td>Bounded execution, receipt generation, Merkle append</td>
+      </tr>
+      <tr>
+        <td>Action blocked (A=0)</td>
+        <td>1</td>
+        <td>On rejection</td>
+        <td>Rejection receipt, audit entry</td>
+      </tr>
+      <tr>
+        <td>Certification issued</td>
+        <td>100</td>
+        <td>On issuance</td>
+        <td>Full audit trail verification, certificate signing</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="merkle-visual">
+<span class="green">MERKLE AUDIT TRAIL — safeclash.com/audit</span>
+
+root:   <span class="green">a9f3c2b1d4e8f7a2...</span>
+  ├── receipt_batch_2026-03-13
+  │     ├── <span class="green">sc_7f3a91b4c2d8e...</span>  action: restart_node       A=1  ✓
+  │     ├── <span class="green">sc_3b8c2d1a9f4e...</span>  action: grid.correlated    A=1  ✓
+  │     └── <span class="green">sc_1a2b3c4d5e6f...</span>  action: db.delete          A=0  blocked
+  └── receipt_batch_2026-03-12
+        ├── <span class="green">sc_9e8d7c6b5a4f...</span>  action: deploy_config      A=1  ✓
+        └── <span class="dim">...</span>
+
+<span class="green">Every entry is immutable. Every root is verifiable.</span>
+  </div>
+</section>
+
+<!-- CERTIFICATION -->
+<section class="reveal">
+  <div class="section-label">Certification</div>
+  <h2>The SafeClash mark means one thing</h2>
+  <p>Any system — a hospital's medication platform, a bank's transaction engine, a city's infrastructure controller — can apply for SafeClash certification. The process verifies that the system implements the full Governed AI OS protocol.</p>
+
+  <div class="pillars" style="margin-top: 3rem;">
+    <div class="pillar">
+      <div class="pillar-title" style="font-size:1.1rem;">01 — Audit</div>
+      <div class="pillar-body">Submit your system's governance implementation. We verify that the canonical loop is intact and that A=0 is mathematically enforced — not just claimed.</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-title" style="font-size:1.1rem;">02 — Test</div>
+      <div class="pillar-body">CLASHD27 runs the certification test suite — 1201 tests across 27 evaluation cells. Zero failures required. No exceptions.</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-title" style="font-size:1.1rem;">03 — Certify</div>
+      <div class="pillar-body">A SafeClash certificate is issued, anchored to the Merkle audit trail, valid for 12 months. Renewal requires re-audit.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="reveal">
+  <div class="section-label">Pricing</div>
+  <h2>Pay for what you govern</h2>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-tier">Open</div>
+      <div class="price-name">Self-hosted</div>
+      <div class="price-amount"><span>Free</span> — always</div>
+      <ul class="price-features">
+        <li>Full bootstrap included</li>
+        <li>Local receipt generation</li>
+        <li>Local Merkle audit trail</li>
+        <li>No certification mark</li>
+        <li>Community support</li>
+      </ul>
+    </div>
+    <div class="price-card featured">
+      <div class="price-tier">Governed</div>
+      <div class="price-name">SafeClash Cloud</div>
+      <div class="price-amount"><span>Per atom</span> — usage based</div>
+      <ul class="price-features">
+        <li>Cloud receipt storage</li>
+        <li>Merkle root anchoring</li>
+        <li>Jeeves approval surface</li>
+        <li>SafeClash certification mark</li>
+        <li>Bitcoin-anchored audit trail</li>
+      </ul>
+    </div>
+    <div class="price-card">
+      <div class="price-tier">Enterprise</div>
+      <div class="price-name">Certified</div>
+      <div class="price-amount"><span>Contact</span> — custom</div>
+      <ul class="price-features">
+        <li>Full certification audit</li>
+        <li>CLASHD27 test suite</li>
+        <li>Legal-grade receipts</li>
+        <li>SLA guarantee</li>
+        <li>Custom atom pricing</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ECOSYSTEM -->
+<section class="reveal" style="padding-bottom: 5rem;">
+  <div class="section-label">Ecosystem</div>
+  <h2>Part of a governed whole</h2>
+  <div class="ecosystem-row">
+    <a href="https://governedaios.com" class="eco-item">
+      <div class="eco-role">Foundation</div>
+      <div class="eco-domain">governedaios.com</div>
+      <div class="eco-desc">The philosophy and formula behind it all</div>
+    </a>
+    <a href="https://openclashd.com" class="eco-item">
+      <div class="eco-role">Kernel</div>
+      <div class="eco-domain">openclashd.com</div>
+      <div class="eco-desc">Governance and consent decisions</div>
+    </a>
+    <a href="https://openclashgrid.com" class="eco-item">
+      <div class="eco-role">Network</div>
+      <div class="eco-domain">openclashgrid.com</div>
+      <div class="eco-desc">Edge signals from the world</div>
+    </a>
+    <div class="eco-item current">
+      <div class="eco-role">Certifier</div>
+      <div class="eco-domain">safeclash.com</div>
+      <div class="eco-desc">Trust, billing, the receipt</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>© 2026 SafeClash — IJmuiden, Netherlands</div>
+  <div style="display:flex;gap:2rem;">
+    <a href="https://governedaios.com">governedaios.com</a>
+    <a href="https://openclashd.com">openclashd.com</a>
+    <a href="https://clashd27.com">clashd27.com</a>
+  </div>
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal')
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80)
+      }
+    })
+  }, { threshold: 0.08 })
+  reveals.forEach(el => observer.observe(el))
+</script>
+</body>
+</html>
