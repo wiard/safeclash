@@ -1,0 +1,114 @@
+:root {
+  --ink: #1f3137;
+  --paper: #f6f9f7;
+  --green: #527b65;
+  --green-bright: #648e76;
+  --green-dim: #93ab9f;
+  --rule: rgba(31, 49, 55, 0.12);
+  --muted: #667a71;
+  --code-bg: #eef5f1;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(82, 123, 101, 0.12), transparent 28%),
+    radial-gradient(circle at 80% 0%, rgba(100, 142, 118, 0.08), transparent 22%),
+    linear-gradient(180deg, #fbfcfb 0%, #f6f9f7 54%, #edf4f0 100%);
+  color: var(--ink);
+}
+
+body::before {
+  opacity: 0.08;
+}
+
+nav,
+.receipt-card,
+.pillar,
+.flow-box,
+.merkle-visual,
+.price-card,
+.eco-item {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: var(--rule);
+  box-shadow: 0 18px 40px rgba(20, 36, 30, 0.06);
+}
+
+nav {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.hero,
+section {
+  border-color: var(--rule);
+}
+
+.hero::before {
+  background: linear-gradient(to bottom, transparent, rgba(82, 123, 101, 0.18), transparent);
+}
+
+h1,
+h2,
+.pillar-title,
+.flow-box-title,
+.price-name,
+.receipt-val,
+.atoms-table td:first-child {
+  color: var(--ink);
+}
+
+p,
+.hero-body,
+.pillar-body,
+.price-features,
+.seal-text,
+.atoms-table td,
+.eco-item,
+.price-amount {
+  color: var(--muted);
+}
+
+.receipt-card::before,
+.nav-brand,
+.section-label,
+.price-tier,
+.flow-box.safeclash .flow-box-label,
+.flow-box.safeclash .flow-box-title {
+  color: var(--green-bright);
+}
+
+.receipt-card::before {
+  background: #f6f9f7;
+}
+
+.price-card.featured,
+.eco-item.current,
+.flow-box.safeclash,
+.merkle-section {
+  background: rgba(100, 142, 118, 0.07);
+}
+
+.atoms-table th,
+.atoms-table td,
+.receipt-row,
+.price-amount,
+.eco-item,
+.pillar,
+.flow-box {
+  border-color: var(--rule);
+}
+
+.nav-right,
+.nav-right a,
+.seal-text,
+.flow-box-label {
+  color: var(--muted);
+}
+
+.nav-right a:hover,
+.eco-item:hover,
+.pillar:hover,
+.flow-box:hover,
+.price-card:hover {
+  color: var(--ink);
+  border-color: rgba(82, 123, 101, 0.22);
+}
