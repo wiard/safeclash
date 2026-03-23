@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeClash — What remains after every decision</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0a0a0f;
+      color: #e8e8e8;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 140px 0 120px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      margin-bottom: 24px;
+      color: #e8e8e8;
+    }
+
+    .hero .tagline {
+      font-size: 20px;
+      font-weight: 300;
+      color: #c8a96e;
+      margin-bottom: 56px;
+    }
+
+    .hero .description p {
+      color: #666680;
+      font-size: 16px;
+      line-height: 1.7;
+      max-width: 480px;
+      margin: 0 auto 8px;
+    }
+
+    /* Columns */
+    .columns-section {
+      padding: 100px 0;
+      border-top: 1px solid rgba(200, 169, 110, 0.12);
+    }
+
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 64px;
+    }
+
+    .column h3 {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #c8a96e;
+      margin-bottom: 20px;
+    }
+
+    .column p {
+      color: #666680;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    /* For whom */
+    .audience-section {
+      padding: 100px 0;
+      border-top: 1px solid rgba(200, 169, 110, 0.12);
+    }
+
+    .audience p {
+      color: #e8e8e8;
+      font-size: 16px;
+      line-height: 1.7;
+      max-width: 520px;
+      margin-bottom: 32px;
+    }
+
+    .audience p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* CTA */
+    .cta-section {
+      padding: 100px 0 140px;
+      border-top: 1px solid rgba(200, 169, 110, 0.12);
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 14px 32px;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      border: 1px solid rgba(200, 169, 110, 0.4);
+      color: #c8a96e;
+      background: transparent;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .btn:hover {
+      border-color: #c8a96e;
+      background: rgba(200, 169, 110, 0.06);
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .hero { padding: 100px 0 80px; }
+      .hero h1 { font-size: 36px; }
+      .columns { grid-template-columns: 1fr; gap: 48px; }
+      .cta-section { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <section class="hero">
+      <h1>SAFECLASH</h1>
+      <p class="tagline">What remains after every decision.</p>
+      <div class="description">
+        <p>AI detecteert verbanden in uw ontwerpen en data.</p>
+        <p>U beslist wat belangrijk is.</p>
+        <p>Het systeem leert van elke beslissing die u neemt.</p>
+      </div>
+    </section>
+
+    <section class="columns-section">
+      <div class="columns">
+        <div class="column">
+          <h3>Detecteert</h3>
+          <p>Verbanden die normaal onzichtbaar blijven. Cross-domain, cross-iteratie.</p>
+        </div>
+        <div class="column">
+          <h3>Beslist</h3>
+          <p>De mens keurt goed of wijst af. Nooit automatisch. Altijd traceerbaar.</p>
+        </div>
+        <div class="column">
+          <h3>Leert</h3>
+          <p>Elke beslissing bouwt kennis op die nergens anders bestaat.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="audience-section">
+      <div class="audience">
+        <p>Voor chip design teams die elke tape-out willen verbeteren zonder de vorige te vergeten.</p>
+        <p>Voor analyse teams die verbanden zien die individuele experts missen.</p>
+        <p>Voor organisaties die AI willen inzetten zonder de controle uit handen te geven.</p>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <a href="#demo" class="btn">Bekijk de demo &rarr;</a>
+      <a href="mailto:contact@safeclash.com" class="btn">contact@safeclash.com</a>
+    </section>
+
+  </div>
+</body>
+</html>
