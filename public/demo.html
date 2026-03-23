@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chip Intelligence — Live Demo · SafeClash</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #080c0a;
+      --paper: #eef2ee;
+      --green: #2e7d4f;
+      --green-bright: #4caf78;
+      --green-dim: #1a4a2e;
+      --rule: #1a2a1e;
+      --muted: #5a7060;
+      --code-bg: #0a120d;
+      --serif: 'EB Garamond', Georgia, serif;
+      --mono: 'JetBrains Mono', monospace;
+      --red: #cf4444;
+      --red-dim: #7a2222;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ink);
+      color: var(--paper);
+      font-family: var(--serif);
+      font-size: 18px;
+      line-height: 1.75;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 1.4rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(46,125,79,0.2);
+      background: rgba(8,12,10,0.9);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+    }
+
+    .nav-brand { color: var(--green-bright); letter-spacing: 0.12em; font-weight: 400; text-decoration: none; }
+    .nav-right { display: flex; align-items: center; gap: 2rem; color: var(--muted); }
+    .nav-right a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav-right a:hover { color: var(--green-bright); }
+
+    .trust-badge {
+      display: flex; align-items: center; gap: 0.5rem;
+      color: var(--green-bright); font-size: 0.65rem; letter-spacing: 0.1em;
+    }
+    .trust-badge::before {
+      content: '✓'; display: inline-flex; align-items: center; justify-content: center;
+      width: 16px; height: 16px; border: 1px solid var(--green-bright);
+      font-size: 0.6rem; border-radius: 50%;
+    }
+
+    /* HERO */
+    .demo-hero {
+      padding: 8rem 3rem 4rem;
+      border-bottom: 1px solid var(--rule);
+      animation: fadeUp 1s ease both;
+    }
+
+    .eyebrow {
+      font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.2em;
+      color: var(--green-bright); text-transform: uppercase; margin-bottom: 2rem;
+      display: flex; align-items: center; gap: 0.8rem;
+    }
+    .eyebrow::before { content: ''; display: block; width: 2rem; height: 1px; background: var(--green-bright); }
+
+    h1 {
+      font-family: var(--serif); font-size: clamp(2.2rem, 4vw, 3.4rem);
+      font-weight: 400; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 1rem;
+    }
+    h1 em { font-style: italic; color: var(--green-bright); }
+
+    .demo-subtitle {
+      font-family: var(--mono); font-size: 0.78rem; color: var(--muted); line-height: 1.6;
+    }
+
+    /* SECTIONS */
+    section {
+      padding: 5rem 3rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .section-label {
+      font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.25em;
+      color: var(--green-bright); text-transform: uppercase; margin-bottom: 3rem;
+      display: flex; align-items: center; gap: 0.8rem;
+    }
+    .section-label::before { content: ''; display: block; width: 2rem; height: 1px; background: var(--green-bright); }
+
+    h2 {
+      font-family: var(--serif); font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+      font-weight: 400; line-height: 1.2; margin-bottom: 2rem;
+    }
+
+    /* METRIC CARDS */
+    .metrics-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 2rem;
+    }
+
+    .metric-card {
+      padding: 2rem 2rem;
+      border: 1px solid var(--rule);
+      margin-right: -1px;
+      transition: border-color 0.3s;
+    }
+    .metric-card:hover { border-color: rgba(46,125,79,0.4); }
+
+    .metric-value {
+      font-family: var(--mono); font-size: 2.4rem; font-weight: 300;
+      color: var(--green-bright); margin-bottom: 0.3rem;
+    }
+    .metric-value.warn { color: var(--red); }
+
+    .metric-label {
+      font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.12em;
+      color: var(--muted); text-transform: uppercase;
+    }
+
+    /* SIGNALS TABLE */
+    .signals-table {
+      width: 100%; border-collapse: collapse;
+      font-family: var(--mono); font-size: 0.78rem; margin-top: 2rem;
+    }
+
+    .signals-table th {
+      text-align: left; padding: 0.8rem 1.2rem;
+      border: 1px solid var(--rule); color: var(--green-bright);
+      font-weight: 400; letter-spacing: 0.1em; font-size: 0.62rem; text-transform: uppercase;
+    }
+
+    .signals-table td {
+      padding: 0.9rem 1.2rem; border: 1px solid var(--rule);
+      color: var(--muted); vertical-align: top;
+    }
+    .signals-table td:first-child { color: var(--paper); }
+    .signals-table tr:hover td { background: rgba(46,125,79,0.03); }
+
+    .severity-critical { color: var(--red); font-weight: 500; }
+    .severity-high { color: #e89040; }
+    .severity-medium { color: #d4b040; }
+    .severity-low { color: var(--green-bright); }
+
+    .signal-hash {
+      color: var(--muted); font-size: 0.65rem; opacity: 0.6;
+    }
+
+    /* GAP DISCOVERY CARDS */
+    .gap-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; margin-top: 2rem;
+    }
+
+    .gap-card {
+      padding: 2rem;
+      border: 1px solid var(--rule);
+      margin-right: -1px; margin-bottom: -1px;
+      transition: border-color 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .gap-card:hover { border-color: rgba(46,125,79,0.4); }
+    .gap-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(46,125,79,0.05), transparent);
+      opacity: 0; transition: opacity 0.4s;
+    }
+    .gap-card:hover::before { opacity: 1; }
+
+    .gap-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .gap-id {
+      font-family: var(--mono); font-size: 0.72rem; color: var(--green-bright);
+      letter-spacing: 0.08em;
+    }
+
+    .gap-badge {
+      font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.15em;
+      text-transform: uppercase; padding: 0.2rem 0.6rem;
+      border: 1px solid rgba(46,125,79,0.4); color: var(--green-bright);
+    }
+
+    .gap-domain-badge {
+      font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 0.15rem 0.5rem;
+      border: 1px solid var(--rule); color: var(--muted); margin-left: 0.4rem;
+    }
+
+    .gap-score {
+      font-family: var(--mono); font-size: 1.4rem; font-weight: 300;
+      color: var(--paper); margin-bottom: 0.6rem;
+    }
+    .gap-score span { font-size: 0.65rem; color: var(--muted); margin-left: 0.3rem; }
+
+    .gap-explanation {
+      font-size: 0.85rem; color: var(--muted); line-height: 1.6; margin-bottom: 1rem;
+      position: relative; z-index: 1;
+    }
+
+    .gap-axes {
+      font-family: var(--mono); font-size: 0.65rem; color: var(--green-dim);
+      line-height: 1.8;
+    }
+    .gap-axes .axis-label { color: var(--muted); }
+
+    .gap-sources {
+      margin-top: 0.8rem; display: flex; flex-wrap: wrap; gap: 0.3rem;
+    }
+    .source-tag {
+      font-family: var(--mono); font-size: 0.55rem; padding: 0.15rem 0.5rem;
+      border: 1px solid var(--rule); color: var(--muted); letter-spacing: 0.05em;
+    }
+
+    .learning-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      border-top: 1px solid var(--rule);
+      border-left: 1px solid var(--rule);
+      margin-top: 1.25rem;
+    }
+
+    .learning-card {
+      padding: 1.6rem;
+      border-right: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .learning-card.full {
+      grid-column: 1 / -1;
+    }
+
+    .learning-card h3 {
+      font-size: 0.82rem;
+      font-family: var(--mono);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--green-bright);
+      margin-bottom: 0.9rem;
+    }
+
+    .learning-list {
+      display: grid;
+      gap: 0.65rem;
+    }
+
+    .learning-item {
+      border: 1px solid var(--rule);
+      padding: 0.8rem 0.9rem;
+      background: rgba(255,255,255,0.01);
+    }
+
+    .learning-item strong,
+    .learning-stat strong {
+      color: var(--paper);
+    }
+
+    .learning-meta,
+    .learning-stat {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .learning-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.6rem 1.2rem;
+    }
+
+    /* LIVE INDICATOR */
+    .live-dot {
+      display: inline-block; width: 8px; height: 8px;
+      background: var(--green-bright); border-radius: 50%;
+      margin-right: 0.5rem; animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* LOADING */
+    .loading {
+      font-family: var(--mono); font-size: 0.75rem; color: var(--muted);
+      padding: 3rem; text-align: center;
+    }
+
+    .error-msg {
+      font-family: var(--mono); font-size: 0.75rem; color: var(--red);
+      padding: 2rem; border: 1px solid var(--red-dim);
+      background: rgba(207,68,68,0.05); margin-top: 1rem;
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 3rem;
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: var(--mono); font-size: 0.65rem; color: var(--muted);
+    }
+    footer a { color: var(--green-dim); text-decoration: none; transition: color 0.2s; }
+    footer a:hover { color: var(--green-bright); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* MOBILE */
+    @media (max-width: 900px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .demo-hero { padding: 7rem 1.5rem 3rem; }
+      section { padding: 3.5rem 1.5rem; }
+      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+      .metric-card { margin-bottom: -1px; }
+      .gap-grid { grid-template-columns: 1fr; }
+      .learning-grid { grid-template-columns: 1fr; }
+      .learning-card.full { grid-column: auto; }
+      .learning-summary-grid { grid-template-columns: 1fr; }
+      .gap-card { margin-right: 0; }
+      .signals-table { font-size: 0.68rem; }
+      .signals-table th, .signals-table td { padding: 0.6rem 0.8rem; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+
+    @media (max-width: 600px) {
+      .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .nav-right { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="/">SAFECLASH</a>
+  <div class="nav-right">
+    <div class="trust-badge"><span class="live-dot"></span> Live Demo</div>
+    <a href="/">Home</a>
+    <a href="https://openclashd.com">OpenClashd</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="demo-hero">
+  <div class="eyebrow">Live Pipeline Data · 23 March 2026</div>
+  <h1>Chip Intelligence — <em>Live Demo</em></h1>
+  <p class="demo-subtitle">
+    GCD sky130hd &middot; 23 maart 2026 &middot; Eerste chip run door SafeClash<br>
+    Data rechtstreeks van de OpenClashd pipeline op de VPS
+  </p>
+</div>
+
+<!-- METRICS -->
+<section class="reveal">
+  <div class="section-label">Pipeline Metrics</div>
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-value" id="m-paths">—</div>
+      <div class="metric-label">Paden geanalyseerd</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" id="m-violations">—</div>
+      <div class="metric-label">Violations gevonden</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value warn" id="m-critical">—</div>
+      <div class="metric-label">Kritiek (&gt;1ns)</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" id="m-gaps">—</div>
+      <div class="metric-label">GAP Discoveries</div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMING SIGNALS -->
+<section class="reveal">
+  <div class="section-label">Grid Signals — Timing Violations</div>
+  <h2>Signalen uit de sky130hd pipeline</h2>
+  <div id="signals-container">
+    <div class="loading">Laden van /api/grid/signals/recent ...</div>
+  </div>
+</section>
+
+<!-- GAP DISCOVERIES -->
+<section class="reveal">
+  <div class="section-label">CLASHD27 GAP Discoveries</div>
+  <h2>Ontdekte kennislacunes in het governance model</h2>
+  <div id="gaps-container">
+    <div class="loading">Laden van /api/radar/classified ...</div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="section-label">Chip Learning</div>
+  <h2>Recente runs, outcomes en hypotheses</h2>
+  <div class="learning-grid">
+    <div class="learning-card">
+      <h3>Learning Summary</h3>
+      <div id="chip-summary-container" class="loading">Laden van /api/proxy/chip/summary ...</div>
+    </div>
+    <div class="learning-card">
+      <h3>Recent Runs</h3>
+      <div id="chip-runs-container" class="loading">Laden van /api/proxy/chip/runs/recent ...</div>
+    </div>
+    <div class="learning-card full">
+      <h3>Recent Outcomes</h3>
+      <div id="chip-outcomes-container" class="loading">Laden van /api/proxy/chip/outcomes/recent ...</div>
+    </div>
+    <div class="learning-card full">
+      <h3>Recent Hypotheses</h3>
+      <div id="chip-hypotheses-container" class="loading">Laden van /api/proxy/chip/hypotheses/recent ...</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>Aangedreven door OpenClashd &middot; CLASHD27 &middot; Jeeves</div>
+  <div style="display:flex;gap:2rem;">
+    <a href="https://openclashd.com">openclashd.com</a>
+    <a href="https://safeclash.com">safeclash.com</a>
+    <a href="https://clashd27.com">clashd27.com</a>
+  </div>
+</footer>
+
+<script>
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.08 });
+  reveals.forEach(el => observer.observe(el));
+
+  const API_BASE = '/api/proxy';
+
+  async function fetchSignals() {
+    try {
+      const res = await fetch(`${API_BASE}/grid/signals/recent`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      renderSignals(data.signals || []);
+    } catch (err) {
+      document.getElementById('signals-container').innerHTML =
+        `<div class="error-msg">Kan signalen niet laden: ${err.message}</div>`;
+    }
+  }
+
+  async function fetchGaps() {
+    try {
+      const res = await fetch(`${API_BASE}/radar/classified`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      renderGaps(data.classified || []);
+    } catch (err) {
+      document.getElementById('gaps-container').innerHTML =
+        `<div class="error-msg">Kan GAP discoveries niet laden: ${err.message}</div>`;
+    }
+  }
+
+  async function fetchChipLearning() {
+    const requests = [
+      { url: `${API_BASE}/chip/summary`, key: 'summary' },
+      { url: `${API_BASE}/chip/runs/recent`, key: 'runs' },
+      { url: `${API_BASE}/chip/outcomes/recent`, key: 'outcomes' },
+      { url: `${API_BASE}/chip/hypotheses/recent`, key: 'hypotheses' }
+    ];
+
+    const results = await Promise.all(requests.map(async (entry) => {
+      try {
+        const res = await fetch(entry.url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return { key: entry.key, ok: true, data: await res.json() };
+      } catch (err) {
+        return { key: entry.key, ok: false, error: err.message };
+      }
+    }));
+
+    const summary = results.find(r => r.key === 'summary');
+    const runs = results.find(r => r.key === 'runs');
+    const outcomes = results.find(r => r.key === 'outcomes');
+    const hypotheses = results.find(r => r.key === 'hypotheses');
+
+    renderChipSummary(summary && summary.ok ? summary.data : null, summary && !summary.ok ? summary.error : null);
+    renderChipRuns(runs && runs.ok ? (runs.data.runs || []) : [], runs && !runs.ok ? runs.error : null);
+    renderChipOutcomes(outcomes && outcomes.ok ? (outcomes.data.outcomes || []) : [], outcomes && !outcomes.ok ? outcomes.error : null);
+    renderChipHypotheses(hypotheses && hypotheses.ok ? (hypotheses.data.hypotheses || []) : [], hypotheses && !hypotheses.ok ? hypotheses.error : null);
+  }
+
+  function renderSignals(signals) {
+    const container = document.getElementById('signals-container');
+
+    // Update metrics
+    const total = signals.length;
+    const critical = signals.filter(s => s.severity === 'critical').length;
+    const high = signals.filter(s => s.severity === 'high').length;
+    document.getElementById('m-paths').textContent = total;
+    document.getElementById('m-violations').textContent = critical + high;
+    document.getElementById('m-critical').textContent = critical;
+
+    if (signals.length === 0) {
+      container.innerHTML = '<div class="loading">Geen signalen gevonden.</div>';
+      return;
+    }
+
+    let html = `<table class="signals-table">
+      <thead><tr>
+        <th>Signal</th>
+        <th>Node / Region</th>
+        <th>Type</th>
+        <th>Severity</th>
+        <th>Timestamp</th>
+      </tr></thead><tbody>`;
+
+    signals.forEach(s => {
+      const sevClass = `severity-${s.severity}`;
+      const time = new Date(s.timestamp).toLocaleTimeString('nl-NL', {
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+      });
+      const shortId = s.signal_id.substring(0, 12) + '...';
+      const typeLabel = s.signal_type.replace(/_/g, ' ');
+
+      html += `<tr>
+        <td><span class="signal-hash">${shortId}</span></td>
+        <td>${s.node_id} &middot; ${s.region}</td>
+        <td>${typeLabel}</td>
+        <td><span class="${sevClass}">${s.severity.toUpperCase()}</span></td>
+        <td>${time}</td>
+      </tr>`;
+    });
+
+    html += '</tbody></table>';
+    container.innerHTML = html;
+  }
+
+  function domainLabel(type) {
+    const labels = {
+      'single': 'Single Domain',
+      'dual': 'Dual Domain',
+      'cross': 'Cross Domain'
+    };
+    return labels[type] || type;
+  }
+
+  function humanExplanation(gap) {
+    const axes = gap.axes || [];
+    if (axes.length < 2) return gap.explanation;
+
+    const a1 = `${axes[0].what}/${axes[0].where}`;
+    const a2 = `${axes[1].what}/${axes[1].where}`;
+
+    return `Er is een kennislacune ontdekt op het snijpunt van <strong>${a1}</strong> en <strong>${a2}</strong>. ` +
+      `Dit duidt op een gebied waar het governance model onvoldoende dekking biedt ` +
+      `en waar nieuw inzicht nodig is om de trust-garanties compleet te maken.`;
+  }
+
+  function renderGaps(gaps) {
+    const container = document.getElementById('gaps-container');
+    document.getElementById('m-gaps').textContent = gaps.length;
+
+    if (gaps.length === 0) {
+      container.innerHTML = '<div class="loading">Geen GAP discoveries gevonden.</div>';
+      return;
+    }
+
+    let html = '<div class="gap-grid">';
+    gaps.forEach(g => {
+      const sources = (g.sources || []).map(s =>
+        `<span class="source-tag">${s}</span>`
+      ).join('');
+
+      const axes = (g.axes || []).map(a =>
+        `<span class="axis-label">${a.what}</span>/${a.where} <span class="axis-label">(${a.time})</span>`
+      ).join(' &rarr; ');
+
+      html += `<div class="gap-card">
+        <div class="gap-header">
+          <div>
+            <span class="gap-id">${g.candidateId}</span>
+            <span class="gap-domain-badge">${domainLabel(g.domainType)}</span>
+          </div>
+          <span class="gap-badge">${g.outcomeType}</span>
+        </div>
+        <div class="gap-score">${g.candidateScore.toFixed(3)} <span>candidate score</span></div>
+        <div class="gap-explanation">${humanExplanation(g)}</div>
+        <div class="gap-axes">${axes}</div>
+        <div class="gap-sources">${sources}</div>
+      </div>`;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+  }
+
+  function renderChipSummary(summary, error) {
+    const container = document.getElementById('chip-summary-container');
+    if (error) {
+      container.innerHTML = `<div class="error-msg">Kan learning summary niet laden: ${error}</div>`;
+      return;
+    }
+    if (!summary) {
+      container.innerHTML = '<div class="loading">Geen summary gevonden.</div>';
+      return;
+    }
+    const actions = (summary.top_proposed_actions || []).map(item =>
+      `<div class="learning-stat"><strong>${item.proposed_action}</strong> &middot; ${item.count}</div>`
+    ).join('') || '<div class="learning-stat">Geen acties.</div>';
+    container.innerHTML = `<div class="learning-summary-grid">
+      <div class="learning-stat"><strong>${summary.total_runs ?? 0}</strong> runs</div>
+      <div class="learning-stat"><strong>${summary.total_violations ?? 0}</strong> violations</div>
+      <div class="learning-stat"><strong>${summary.total_critical_paths ?? 0}</strong> critical</div>
+      <div class="learning-stat"><strong>${summary.blocking_paths_count ?? 0}</strong> blocking</div>
+      <div class="learning-stat"><strong>${summary.improved_count ?? 0}</strong> improved</div>
+      <div class="learning-stat"><strong>${summary.unchanged_count ?? 0}</strong> unchanged</div>
+      <div class="learning-stat"><strong>${summary.regressed_count ?? 0}</strong> regressed</div>
+      <div class="learning-stat"><strong>${summary.resolved_count ?? 0}</strong> resolved</div>
+      <div class="learning-stat"><strong>${summary.new_violation_count ?? 0}</strong> new violations</div>
+      <div class="learning-stat"><strong>Top actions</strong><br>${actions}</div>
+    </div>`;
+  }
+
+  function renderChipRuns(runs, error) {
+    const container = document.getElementById('chip-runs-container');
+    if (error) {
+      container.innerHTML = `<div class="error-msg">Kan runs niet laden: ${error}</div>`;
+      return;
+    }
+    if (!runs.length) {
+      container.innerHTML = '<div class="loading">Geen runs gevonden.</div>';
+      return;
+    }
+    container.innerHTML = `<div class="learning-list">${runs.slice(0, 6).map(run => `
+      <div class="learning-item">
+        <div class="learning-meta"><strong>${run.run_id}</strong> &middot; ${run.design || 'unknown'} &middot; ${run.platform || 'unknown'}</div>
+        <div class="learning-meta">${run.signal_count || 0} paths, ${run.violation_count || 0} violations, ${run.critical_count || 0} critical</div>
+        <div class="learning-meta">${run.created_at || '—'}</div>
+      </div>
+    `).join('')}</div>`;
+  }
+
+  function renderChipOutcomes(outcomes, error) {
+    const container = document.getElementById('chip-outcomes-container');
+    if (error) {
+      container.innerHTML = `<div class="error-msg">Kan outcomes niet laden: ${error}</div>`;
+      return;
+    }
+    if (!outcomes.length) {
+      container.innerHTML = '<div class="loading">Geen outcomes gevonden.</div>';
+      return;
+    }
+    container.innerHTML = `<table class="signals-table">
+      <thead><tr>
+        <th>Path</th>
+        <th>Outcome</th>
+        <th>Delta</th>
+        <th>Blocking</th>
+      </tr></thead><tbody>
+      ${outcomes.slice(0, 8).map(item => `
+        <tr>
+          <td>${item.path_key || '—'}</td>
+          <td>${item.outcome || '—'}</td>
+          <td>${typeof item.slack_delta_ns === 'number' ? item.slack_delta_ns.toFixed(2) : '—'}</td>
+          <td>${item.blocking ? 'yes' : 'no'}</td>
+        </tr>
+      `).join('')}
+      </tbody></table>`;
+  }
+
+  function renderChipHypotheses(hypotheses, error) {
+    const container = document.getElementById('chip-hypotheses-container');
+    if (error) {
+      container.innerHTML = `<div class="error-msg">Kan hypotheses niet laden: ${error}</div>`;
+      return;
+    }
+    if (!hypotheses.length) {
+      container.innerHTML = '<div class="loading">Geen hypotheses gevonden.</div>';
+      return;
+    }
+    container.innerHTML = `<div class="learning-list">${hypotheses.slice(0, 6).map(item => `
+      <div class="learning-item">
+        <div class="learning-meta"><strong>${item.proposed_action || '—'}</strong> &middot; ${item.classification || '—'}</div>
+        <div class="learning-meta">${item.path_key || '—'}</div>
+        <div class="learning-meta">${item.rationale || '—'}</div>
+      </div>
+    `).join('')}</div>`;
+  }
+
+  // Load data
+  fetchSignals();
+  fetchGaps();
+  fetchChipLearning();
+</script>
+</body>
+</html>
