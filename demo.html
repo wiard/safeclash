@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeClash — Chip Intelligence Demo</title>
+  <link rel="stylesheet" href="calm-theme.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0a0a0a;
+      color: #e8e6df;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 80px 40px;
+    }
+
+    /* Nav */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 80px;
+    }
+    .nav-logo {
+      font-size: 13px;
+      letter-spacing: 0.15em;
+      color: #e8e6df;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+    .nav-back {
+      font-size: 13px;
+      color: #666;
+      text-decoration: none;
+    }
+    .nav-back:hover { color: #999; }
+
+    /* Header */
+    .header { margin-bottom: 60px; }
+    .header-label {
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: #c9a96e;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .header-title {
+      font-size: 32px;
+      font-weight: 300;
+      color: #e8e6df;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+    .header-sub {
+      font-size: 14px;
+      color: #555;
+    }
+
+    /* Metrics */
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: #1a1a1a;
+      border: 1px solid #1a1a1a;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 60px;
+    }
+    .metric {
+      background: #0f0f0f;
+      padding: 28px 24px;
+    }
+    .metric-label {
+      font-size: 11px;
+      color: #444;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+    .metric-value {
+      font-size: 36px;
+      font-weight: 300;
+      color: #e8e6df;
+      letter-spacing: -0.02em;
+    }
+    .metric-sub {
+      font-size: 12px;
+      color: #444;
+      margin-top: 4px;
+    }
+
+    /* Section */
+    .section { margin-bottom: 60px; }
+    .section-title {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: #444;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #1a1a1a;
+    }
+
+    /* Signals */
+    .signal {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid #141414;
+    }
+    .signal:last-child { border-bottom: none; }
+    .signal-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 6px;
+    }
+    .dot-critical { background: #c0392b; }
+    .dot-high     { background: #c9a96e; }
+    .dot-medium   { background: #3d7ab5; }
+    .dot-low      { background: #2d6e4e; }
+    .signal-body { flex: 1; min-width: 0; }
+    .signal-path {
+      font-size: 13px;
+      color: #bbb;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .signal-desc {
+      font-size: 12px;
+      color: #444;
+      margin-top: 2px;
+    }
+    .signal-slack {
+      font-size: 13px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      flex-shrink: 0;
+    }
+    .slack-neg { color: #c0392b; }
+    .slack-pos { color: #2d6e4e; }
+    .signal-badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 2px;
+      flex-shrink: 0;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .badge-critical { background: #1a0a0a; color: #c0392b; border: 1px solid #2a0a0a; }
+    .badge-high     { background: #1a1400; color: #c9a96e; border: 1px solid #2a1e00; }
+    .badge-medium   { background: #0a0f1a; color: #3d7ab5; border: 1px solid #0a1525; }
+    .badge-low      { background: #0a1410; color: #2d6e4e; border: 1px solid #0a1e14; }
+
+    /* Discoveries */
+    .discovery {
+      padding: 18px 0;
+      border-bottom: 1px solid #141414;
+    }
+    .discovery:last-child { border-bottom: none; }
+    .discovery-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+    .discovery-id {
+      font-size: 11px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: #333;
+    }
+    .discovery-type {
+      font-size: 10px;
+      padding: 2px 8px;
+      background: #0d0d1a;
+      color: #7070c0;
+      border: 1px solid #1a1a2a;
+      border-radius: 2px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .discovery-score {
+      font-size: 12px;
+      color: #333;
+      margin-left: auto;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+    .discovery-axes {
+      font-size: 13px;
+      color: #555;
+    }
+    .discovery-axes strong { color: #888; font-weight: 400; }
+
+    /* Live indicator */
+    .live-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #333;
+      margin-bottom: 60px;
+    }
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #2d6e4e;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Loading */
+    .loading { color: #333; font-size: 13px; padding: 20px 0; }
+
+    /* Footer */
+    .footer {
+      margin-top: 80px;
+      padding-top: 24px;
+      border-top: 1px solid #1a1a1a;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #333;
+    }
+    .footer a { color: #444; text-decoration: none; }
+    .footer a:hover { color: #666; }
+
+    @media (max-width: 600px) {
+      .page { padding: 40px 20px; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .metric-value { font-size: 28px; }
+      .signal-slack, .signal-badge { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <nav class="nav">
+    <a href="/" class="nav-logo">SafeClash</a>
+    <a href="/" class="nav-back">← terug</a>
+  </nav>
+
+  <header class="header">
+    <p class="header-label">Chip Intelligence — Live Demo</p>
+    <h1 class="header-title">Eerste chip run door SafeClash</h1>
+    <p class="header-sub">GCD sky130hd · Tiny Tapeout referentieontwerp · 23 maart 2026</p>
+  </header>
+
+  <div class="live-bar">
+    <span class="live-dot"></span>
+    <span id="live-status">Verbinding maken met OpenClashd...</span>
+  </div>
+
+  <div class="metrics" id="metrics">
+    <div class="metric">
+      <div class="metric-label">Paden</div>
+      <div class="metric-value" id="m-paden">—</div>
+      <div class="metric-sub">geanalyseerd</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Violations</div>
+      <div class="metric-value" id="m-violations">—</div>
+      <div class="metric-sub">gevonden</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Kritiek</div>
+      <div class="metric-value" id="m-critical">—</div>
+      <div class="metric-sub">blokkeren tapeout</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Discoveries</div>
+      <div class="metric-value" id="m-discoveries">—</div>
+      <div class="metric-sub">CLASHD27 GAP</div>
+    </div>
+  </div>
+
+  <section class="section">
+    <h2 class="section-title">Timing signals</h2>
+    <div id="signals"><p class="loading">Signalen ophalen...</p></div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">CLASHD27 — GAP discoveries</h2>
+    <div id="discoveries"><p class="loading">Discoveries ophalen...</p></div>
+  </section>
+
+  <footer class="footer">
+    <span>Aangedreven door OpenClashd · CLASHD27 · Jeeves</span>
+    <a href="mailto:contact@safeclash.com">contact@safeclash.com</a>
+  </footer>
+
+</div>
+
+<script>
+const API = 'https://openclashd.com';
+
+async function load() {
+  try {
+    const [signalsRes, classifiedRes] = await Promise.all([
+      fetch(API + '/api/grid/signals/recent'),
+      fetch(API + '/api/radar/classified')
+    ]);
+
+    const signalsData    = await signalsRes.json();
+    const classifiedData = await classifiedRes.json();
+
+    renderSignals(signalsData.signals || signalsData.entries || []);
+    renderDiscoveries(classifiedData.classified || []);
+
+    document.getElementById('live-status').textContent =
+      'Live data van OpenClashd kernel — ' + new Date().toLocaleString('nl-NL');
+
+  } catch(e) {
+    renderFallback();
+    document.getElementById('live-status').textContent =
+      'Live verbinding niet beschikbaar — statische demo data';
+  }
+}
+
+function severity(slack) {
+  if (slack < -1.0) return 'critical';
+  if (slack < 0)    return 'high';
+  if (slack < 0.5)  return 'medium';
+  return 'low';
+}
+
+function severityLabel(s) {
+  return { critical: 'kritiek', high: 'hoog', medium: 'marginaal', low: 'veilig' }[s];
+}
+
+function renderSignals(signals) {
+  const FALLBACK = [
+    { startpoint: 'B_reg[15]', endpoint: 'A_reg[0]',          slack: -2.14, subdomain: 'setup-violation' },
+    { startpoint: 'addr_reg[0]', endpoint: 'result_reg[3]',   slack: -1.83, subdomain: 'setup-violation' },
+    { startpoint: 'A_reg[0]', endpoint: 'resp_msg_reg[0]',    slack: -1.76, subdomain: 'setup-violation' },
+    { startpoint: 'B_reg[3]', endpoint: 'A_reg[3]',           slack: -1.19, subdomain: 'setup-violation' },
+    { startpoint: 'A_reg[12]', endpoint: 'B_reg[14]',         slack: -0.78, subdomain: 'setup-violation' },
+    { startpoint: 'req_msg_reg[14]', endpoint: 'A_reg[15]',   slack: -0.31, subdomain: 'setup-violation' },
+    { startpoint: 'clk_buf/Q', endpoint: 'data_path/D',       slack: -0.31, subdomain: 'hold-violation'  },
+    { startpoint: 'A_reg[4]', endpoint: 'B_reg[4]',           slack:  0.18, subdomain: 'setup-timing'    },
+    { startpoint: 'A_reg[1]', endpoint: 'B_reg[1]',           slack:  0.22, subdomain: 'hold-timing'     },
+    { startpoint: 'B_reg[2]', endpoint: 'A_reg[2]',           slack:  0.07, subdomain: 'hold-timing'     },
+    { startpoint: 'req_val_reg', endpoint: 'state_reg[1]',    slack:  1.93, subdomain: 'setup-timing'    },
+    { startpoint: 'A_reg[7]', endpoint: 'B_reg[7]',           slack:  3.42, subdomain: 'setup-timing'    },
+    { startpoint: 'req_rdy_reg', endpoint: 'resp_msg_reg[10]',slack:  8.07, subdomain: 'setup-timing'    },
+  ];
+
+  const data = signals.length ? signals : FALLBACK;
+  const violations = data.filter(s => (s.slack ?? s.slack_ns) < 0).length;
+  const critical   = data.filter(s => (s.slack ?? s.slack_ns) < -1.0).length;
+
+  document.getElementById('m-paden').textContent = data.length;
+  document.getElementById('m-violations').textContent = violations;
+  document.getElementById('m-critical').textContent = critical;
+
+  const html = data.map(s => {
+    const slack = s.slack ?? s.slack_ns ?? 0;
+    const sev   = severity(slack);
+    const start = (s.startpoint || s.start || '').split('/').pop();
+    const end   = (s.endpoint   || s.end   || '').split('/').pop();
+    const slackStr = (slack >= 0 ? '+' : '') + slack.toFixed(2) + ' ns';
+    return `
+      <div class="signal">
+        <div class="signal-dot dot-${sev}"></div>
+        <div class="signal-body">
+          <div class="signal-path">${start} → ${end}</div>
+          <div class="signal-desc">${s.description || s.subdomain || ''}</div>
+        </div>
+        <div class="signal-slack ${slack < 0 ? 'slack-neg' : 'slack-pos'}">${slackStr}</div>
+        <div class="signal-badge badge-${sev}">${severityLabel(sev)}</div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('signals').innerHTML = html;
+}
+
+function renderDiscoveries(classified) {
+  const FALLBACK = [
+    { candidateId: 'disc-grav-2-6', outcomeType: 'GAP', candidateScore: 2.267,
+      explanation: 'Spanning tussen architectuur/intern en vertrouwensmodel/engine — cross-domein patroon' },
+    { candidateId: 'disc-grav-3-6', outcomeType: 'GAP', candidateScore: 2.267,
+      explanation: 'Spanning tussen vertrouwensmodel/extern en vertrouwensmodel/engine — hoge signaaldichtheid' },
+    { candidateId: 'disc-grav-6-8', outcomeType: 'GAP', candidateScore: 2.267,
+      explanation: 'Spanning tussen vertrouwensmodel/engine en architectuur/engine — 4 bronnen' },
+    { candidateId: 'disc-grav-2-15', outcomeType: 'GAP', candidateScore: 1.565,
+      explanation: 'Spanning tussen architectuur/intern en vertrouwensmodel/engine (huidig)' },
+    { candidateId: 'disc-grav-2-3', outcomeType: 'GAP', candidateScore: 1.565,
+      explanation: 'Spanning tussen architectuur/intern en vertrouwensmodel/extern' },
+  ];
+
+  const data = classified.length ? classified : FALLBACK;
+  document.getElementById('m-discoveries').textContent = data.length;
+
+  const html = data.map(d => `
+    <div class="discovery">
+      <div class="discovery-top">
+        <span class="discovery-id">${d.candidateId}</span>
+        <span class="discovery-type">${d.outcomeType}</span>
+        <span class="discovery-score">${(d.candidateScore || 0).toFixed(3)}</span>
+      </div>
+      <div class="discovery-axes">${d.explanation || ''}</div>
+    </div>`).join('');
+
+  document.getElementById('discoveries').innerHTML = html;
+}
+
+function renderFallback() {
+  renderSignals([]);
+  renderDiscoveries([]);
+}
+
+load();
+</script>
+</body>
+</html>
