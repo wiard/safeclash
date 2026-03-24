@@ -10,25 +10,31 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --ink: #080c0a;
-      --paper: #eef2ee;
+      --ink: #18221c;
+      --paper: #f5f3ee;
+      --surface: #ffffff;
+      --surface-soft: #fbfaf7;
       --green: #2e7d4f;
       --green-bright: #4caf78;
       --green-dim: #1a4a2e;
-      --rule: #1a2a1e;
-      --muted: #5a7060;
-      --code-bg: #0a120d;
+      --rule: #d6ddd4;
+      --muted: #5f6f65;
+      --code-bg: #eef3ee;
       --serif: 'EB Garamond', Georgia, serif;
       --mono: 'JetBrains Mono', monospace;
       --red: #cf4444;
-      --red-dim: #7a2222;
+      --red-dim: #f3d9d9;
+      --amber: #9a6b1f;
+      --shadow-soft: 0 20px 50px rgba(24, 34, 28, 0.06);
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      background: var(--ink);
-      color: var(--paper);
+      background:
+        radial-gradient(circle at top, rgba(76,175,120,0.08), transparent 30%),
+        linear-gradient(180deg, #f8f6f1 0%, var(--paper) 100%);
+      color: var(--ink);
       font-family: var(--serif);
       font-size: 18px;
       line-height: 1.75;
@@ -42,7 +48,7 @@
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
       pointer-events: none;
       z-index: 1000;
-      opacity: 0.4;
+      opacity: 0.14;
     }
 
     /* NAV */
@@ -54,8 +60,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(46,125,79,0.2);
-      background: rgba(8,12,10,0.9);
+      border-bottom: 1px solid rgba(24,34,28,0.08);
+      background: rgba(248,246,241,0.9);
       backdrop-filter: blur(12px);
       z-index: 100;
       font-family: var(--mono);
@@ -127,6 +133,8 @@
     .metric-card {
       padding: 2rem 2rem;
       border: 1px solid var(--rule);
+      background: var(--surface);
+      box-shadow: var(--shadow-soft);
       margin-right: -1px;
       transition: border-color 0.3s;
     }
@@ -158,13 +166,14 @@
     .signals-table td {
       padding: 0.9rem 1.2rem; border: 1px solid var(--rule);
       color: var(--muted); vertical-align: top;
+      background: var(--surface);
     }
-    .signals-table td:first-child { color: var(--paper); }
-    .signals-table tr:hover td { background: rgba(46,125,79,0.03); }
+    .signals-table td:first-child { color: var(--ink); }
+    .signals-table tr:hover td { background: rgba(46,125,79,0.05); }
 
     .severity-critical { color: var(--red); font-weight: 500; }
-    .severity-high { color: #e89040; }
-    .severity-medium { color: #d4b040; }
+    .severity-high { color: #c26b1d; }
+    .severity-medium { color: var(--amber); }
     .severity-low { color: var(--green-bright); }
 
     .signal-hash {
@@ -179,6 +188,8 @@
     .gap-card {
       padding: 2rem;
       border: 1px solid var(--rule);
+      background: var(--surface);
+      box-shadow: var(--shadow-soft);
       margin-right: -1px; margin-bottom: -1px;
       transition: border-color 0.3s;
       position: relative;
@@ -216,7 +227,7 @@
 
     .gap-score {
       font-family: var(--mono); font-size: 1.4rem; font-weight: 300;
-      color: var(--paper); margin-bottom: 0.6rem;
+      color: var(--ink); margin-bottom: 0.6rem;
     }
     .gap-score span { font-size: 0.65rem; color: var(--muted); margin-left: 0.3rem; }
 
@@ -251,6 +262,7 @@
       padding: 1.6rem;
       border-right: 1px solid var(--rule);
       border-bottom: 1px solid var(--rule);
+      background: var(--surface);
     }
 
     .learning-card.full {
@@ -274,12 +286,12 @@
     .learning-item {
       border: 1px solid var(--rule);
       padding: 0.8rem 0.9rem;
-      background: rgba(255,255,255,0.01);
+      background: var(--surface-soft);
     }
 
     .learning-item strong,
     .learning-stat strong {
-      color: var(--paper);
+      color: var(--ink);
     }
 
     .learning-meta,
@@ -299,7 +311,7 @@
     .learning-explainer {
       border: 1px solid var(--rule);
       padding: 1rem 1.1rem;
-      background: rgba(46,125,79,0.05);
+      background: rgba(76,175,120,0.08);
     }
 
     .learning-explainer-title {
@@ -314,7 +326,7 @@
     .learning-explainer-text {
       font-size: 0.92rem;
       line-height: 1.55;
-      color: var(--paper);
+      color: var(--ink);
     }
 
     .delta-list {
@@ -326,7 +338,7 @@
     .delta-row {
       font-family: var(--mono);
       font-size: 0.82rem;
-      color: var(--paper);
+      color: var(--ink);
       line-height: 1.5;
     }
 
@@ -349,9 +361,198 @@
     .best-action {
       font-family: var(--mono);
       font-size: 0.8rem;
-      color: var(--paper);
+      color: var(--ink);
       font-weight: 700;
       line-height: 1.6;
+    }
+
+    .intel-list {
+      display: grid;
+      gap: 0.85rem;
+      margin-top: 1.2rem;
+    }
+
+    .intel-card {
+      border: 1px solid var(--rule);
+      padding: 1rem 1.1rem;
+      background: var(--surface);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .intel-id {
+      font-family: var(--mono);
+      font-size: 0.63rem;
+      color: var(--green-bright);
+      letter-spacing: 0.08em;
+      margin-bottom: 0.45rem;
+    }
+
+    .intel-explanation {
+      font-size: 1rem;
+      line-height: 1.45;
+      color: var(--ink);
+      margin-bottom: 0.55rem;
+    }
+
+    .intel-meta {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .intel-type {
+      color: var(--green-bright);
+      font-weight: 500;
+    }
+
+    .intel-score {
+      color: var(--ink);
+    }
+
+    .chip-cube-shell {
+      border: 1px solid var(--rule);
+      background: var(--surface);
+      padding: 1.4rem;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .cube-intro {
+      font-size: 1rem;
+      color: var(--muted);
+      margin: 0 0 1.4rem;
+      max-width: 54rem;
+    }
+
+    .cube-axes {
+      display: grid;
+      grid-template-columns: 120px repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+      align-items: stretch;
+    }
+
+    .cube-axis-corner,
+    .cube-column-label,
+    .cube-row-label,
+    .cube-cell {
+      border: 1px solid var(--rule);
+      border-radius: 16px;
+      background: var(--surface-soft);
+    }
+
+    .cube-axis-corner,
+    .cube-column-label {
+      padding: 0.8rem 0.9rem;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .cube-axis-corner strong,
+    .cube-column-label strong {
+      display: block;
+      color: var(--ink);
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      margin-top: 0.25rem;
+    }
+
+    .cube-row-label {
+      padding: 1rem 0.9rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      font-family: var(--mono);
+      color: var(--muted);
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .cube-row-label strong {
+      color: var(--ink);
+      font-size: 0.84rem;
+      letter-spacing: 0.04em;
+      margin-top: 0.25rem;
+    }
+
+    .cube-cell {
+      padding: 1rem;
+      min-height: 132px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .cube-cell.is-highlight {
+      border-color: rgba(76,175,120,0.55);
+      background: linear-gradient(180deg, rgba(76,175,120,0.12), rgba(255,255,255,0.96));
+      box-shadow: inset 0 0 0 1px rgba(76,175,120,0.12);
+    }
+
+    .cube-cell-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      align-items: flex-start;
+      font-family: var(--mono);
+      font-size: 0.63rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .cube-chip-label {
+      color: var(--ink);
+      font-size: 0.92rem;
+      line-height: 1.25;
+      font-family: var(--mono);
+    }
+
+    .cube-chip-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.2rem 0.45rem;
+      border-radius: 999px;
+      font-size: 0.58rem;
+      border: 1px solid var(--rule);
+      background: #fff;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .cube-cell.is-highlight .cube-chip-tag {
+      border-color: rgba(76,175,120,0.4);
+      color: var(--green-dim);
+    }
+
+    .cube-chip-meta,
+    .cube-chip-reason,
+    .cube-note {
+      font-family: var(--mono);
+      color: var(--muted);
+    }
+
+    .cube-chip-meta {
+      font-size: 0.62rem;
+      line-height: 1.5;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .cube-chip-reason {
+      font-size: 0.7rem;
+      line-height: 1.55;
+    }
+
+    .cube-note {
+      margin-top: 1rem;
+      font-size: 0.68rem;
+      line-height: 1.7;
     }
 
     /* LIVE INDICATOR */
@@ -374,8 +575,8 @@
 
     .error-msg {
       font-family: var(--mono); font-size: 0.75rem; color: var(--red);
-      padding: 2rem; border: 1px solid var(--red-dim);
-      background: rgba(207,68,68,0.05); margin-top: 1rem;
+      padding: 2rem; border: 1px solid #e8b8b8;
+      background: rgba(207,68,68,0.08); margin-top: 1rem;
     }
 
     /* FOOTER */
@@ -408,6 +609,8 @@
       .metric-card { margin-bottom: -1px; }
       .gap-grid { grid-template-columns: 1fr; }
       .learning-grid { grid-template-columns: 1fr; }
+      .cube-axes { grid-template-columns: 1fr; }
+      .cube-axis-corner { display: none; }
       .learning-card.full { grid-column: auto; }
       .learning-summary-grid { grid-template-columns: 1fr; }
       .gap-card { margin-right: 0; }
@@ -511,6 +714,23 @@
   </div>
 </section>
 
+<section class="reveal">
+  <div class="section-label">Chip Cube (3×3×3)</div>
+  <h2>Zichtbaar model van wat er speelt, hoe ernstig het is en wat meestal past</h2>
+  <p class="cube-intro">Deze kubus laat zien welk soort chipprobleem speelt, hoe ernstig het is, en welke aanpak meestal past.</p>
+  <div id="chip-cube-container" class="chip-cube-shell">
+    <div class="loading">Opbouwen van de chip cube uit learning en intelligence data ...</div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="section-label">Chip Intelligence</div>
+  <h2>CLASHD27 chip discoveries uit echte timing patterns</h2>
+  <div id="chip-intelligence-container">
+    <div class="loading">Laden van /api/proxy/chip/cube/discoveries ...</div>
+  </div>
+</section>
+
 <footer>
   <div>Aangedreven door OpenClashd &middot; CLASHD27 &middot; Jeeves</div>
   <div style="display:flex;gap:2rem;">
@@ -533,6 +753,12 @@
   reveals.forEach(el => observer.observe(el));
 
   const API_BASE = '/api/proxy';
+  const chipCubeState = {
+    summary: null,
+    outcomes: [],
+    hypotheses: [],
+    discoveries: []
+  };
 
   async function fetchSignals() {
     try {
@@ -590,6 +816,26 @@
     renderChipRuns(runs && runs.ok ? (runs.data.runs || []) : [], runs && !runs.ok ? runs.error : null);
     renderChipOutcomes(outcomes && outcomes.ok ? (outcomes.data.outcomes || []) : [], outcomes && !outcomes.ok ? outcomes.error : null);
     renderChipHypotheses(hypotheses && hypotheses.ok ? (hypotheses.data.hypotheses || []) : [], hypotheses && !hypotheses.ok ? hypotheses.error : null);
+    chipCubeState.summary = summary && summary.ok ? summary.data : null;
+    chipCubeState.outcomes = outcomes && outcomes.ok ? (outcomes.data.outcomes || []) : [];
+    chipCubeState.hypotheses = hypotheses && hypotheses.ok ? (hypotheses.data.hypotheses || []) : [];
+    renderChipCube();
+  }
+
+  async function fetchChipIntelligence() {
+    try {
+      const res = await fetch(`${API_BASE}/chip/cube/discoveries`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      chipCubeState.discoveries = data.discoveries || [];
+      renderChipIntelligence(chipCubeState.discoveries);
+      renderChipCube();
+    } catch (err) {
+      document.getElementById('chip-intelligence-container').innerHTML =
+        `<div class="error-msg">Kan chip intelligence niet laden: ${err.message}</div>`;
+      chipCubeState.discoveries = [];
+      renderChipCube();
+    }
   }
 
   function actionLabel(action) {
@@ -602,17 +848,97 @@
     return labels[action] || 'verdere timing-optimalisatie';
   }
 
+  function normalizeActionKey(action) {
+    const text = String(action || '').toLowerCase();
+    if (text.includes('retime')) return 'retime';
+    if (text.includes('delay')) return 'delay';
+    if (text.includes('monitor') || text.includes('margin')) return 'monitor';
+    if (text.includes('buffer') || text.includes('resize')) return 'buffer';
+    return 'monitor';
+  }
+
+  function shortActionLabel(action) {
+    const labels = {
+      retime: 'Retime',
+      buffer: 'Buffer',
+      delay: 'Delay',
+      monitor: 'Monitor'
+    };
+    return labels[normalizeActionKey(action)] || 'Monitor';
+  }
+
+  function normalizeWhat(text) {
+    const value = String(text || '').toLowerCase();
+    if (value.includes('hold')) return 'hold';
+    if (value.includes('power') || value.includes('leak') || value.includes('ir') || value.includes('drop')) return 'power';
+    if (value.includes('setup')) return 'setup';
+    return '';
+  }
+
+  function normalizeSeverity(text) {
+    const value = String(text || '').toLowerCase();
+    if (value.includes('critical') || value.includes('blocking')) return 'critical';
+    if (value.includes('violation') || value.includes('regress') || value.includes('wors')) return 'violation';
+    if (value.includes('margin') || value.includes('monitor') || value.includes('improv') || value.includes('unchanged') || value.includes('resolve')) return 'margin';
+    return '';
+  }
+
+  function inferWhat(item, fallback) {
+    const fields = [
+      item.classification,
+      item.path_key,
+      item.rationale,
+      item.explanation,
+      item.outcomeType,
+      item.outcome
+    ];
+    for (const field of fields) {
+      const inferred = normalizeWhat(field);
+      if (inferred) return inferred;
+    }
+    return fallback || 'setup';
+  }
+
+  function inferSeverity(item, fallback) {
+    const fields = [
+      item.classification,
+      item.outcome,
+      item.rationale,
+      item.explanation,
+      item.outcomeType
+    ];
+    for (const field of fields) {
+      const inferred = normalizeSeverity(field);
+      if (inferred) return inferred;
+    }
+    if (typeof item.slack_delta_ns === 'number') {
+      if (item.slack_delta_ns <= -1) return 'critical';
+      if (item.slack_delta_ns < 0) return 'violation';
+      return 'margin';
+    }
+    return fallback || 'violation';
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   function formatDelta(prev, curr, label) {
     const improved = curr < prev;
     const unchanged = curr === prev;
     const currColor = improved ? '#2e7d32' : (unchanged ? '#999' : '#cf4444');
-    const currIcon = improved ? '🟢' : (unchanged ? '⚪' : '🔴');
+    const currState = improved ? 'improved' : (unchanged ? 'unchanged' : 'regressed');
     return `
       <div class="delta-row">
-        <span style="color:#c33;">🔴 ${prev}</span>
-        <span style="color:#999;padding:0 0.35rem;">→</span>
-        <span style="color:${currColor};">${currIcon} ${curr}</span>
-        <span style="color:#d7ddd7;">${label}</span>
+        <span style="color:#cf4444;">${prev}</span>
+        <span style="color:#99a49c;padding:0 0.35rem;">→</span>
+        <span style="color:${currColor};">${curr}</span>
+        <span style="color:#5f6f65;">${label} · ${currState}</span>
       </div>
     `;
   }
@@ -656,10 +982,10 @@
         ${showImpact ? '<div class="impact-line">De chip is aantoonbaar verbeterd</div>' : ''}
         <div class="result-summary">
           <strong style="color:#2e7d32;">+${improvedCount} verbeterd</strong><br>
-          <span style="color:${regressedCount === 0 ? '#d7ddd7' : '#cf4444'};">${regressionText}</span>
-          ${unchangedCount > 0 ? `<br><span style="color:#999;">${unchangedCount} ongewijzigd</span>` : ''}
+          <span style="color:${regressedCount === 0 ? '#5f6f65' : '#cf4444'};">${regressionText}</span>
+          ${unchangedCount > 0 ? `<br><span style="color:#7d8a82;">${unchangedCount} ongewijzigd</span>` : ''}
         </div>
-        <div class="best-action">👉 Beste aanpak:<br>${topAction}</div>
+        <div class="best-action">Beste aanpak:<br>${topAction}</div>
       </div>
     </div>`;
   }
@@ -861,10 +1187,190 @@
     `).join('')}</div>`;
   }
 
+  function buildCubeEvidence(summary, hypotheses, discoveries, outcomes) {
+    const liveActionWeights = { retime: 0, buffer: 0, delay: 0, monitor: 0 };
+    (summary && summary.top_proposed_actions || []).forEach(item => {
+      const key = normalizeActionKey(item.proposed_action);
+      liveActionWeights[key] += Number(item.count || 0);
+    });
+
+    const defaults = {
+      'setup-margin': { action: 'monitor', reason: 'setup heeft ruimte maar blijft onder observatie' },
+      'setup-violation': { action: 'buffer', reason: 'setup violations reageren vaak op bufferwerk of resizing' },
+      'setup-critical': { action: 'retime', reason: 'kritieke setup-paden vragen meestal retiming' },
+      'hold-margin': { action: 'monitor', reason: 'hold is stabiel maar blijft gevoelig bij kleine verschuivingen' },
+      'hold-violation': { action: 'delay', reason: 'hold violations vragen meestal extra delay' },
+      'hold-critical': { action: 'buffer', reason: 'kritieke hold-problemen vragen directe buffering of delay control' },
+      'power-margin': { action: 'monitor', reason: 'power blijft binnen marge maar vraagt waakzaamheid' },
+      'power-violation': { action: 'buffer', reason: 'power-achtige druk vertaalt vaak naar buffering of sizing' },
+      'power-critical': { action: 'retime', reason: 'zware power/critical patronen vragen structurele timing-ingrepen' }
+    };
+
+    const cells = {};
+    Object.keys(defaults).forEach(key => {
+      const preset = defaults[key];
+      cells[key] = {
+        actionScores: {
+          retime: liveActionWeights.retime,
+          buffer: liveActionWeights.buffer,
+          delay: liveActionWeights.delay,
+          monitor: liveActionWeights.monitor
+        },
+        reason: preset.reason,
+        evidence: [],
+        source: summary ? 'learning + intelligence' : 'chip model'
+      };
+      cells[key].actionScores[preset.action] += 6;
+    });
+
+    const addEvidence = (what, severity, action, reason, source, weight) => {
+      const key = `${what}-${severity}`;
+      if (!cells[key]) return;
+      const actionKey = normalizeActionKey(action);
+      cells[key].actionScores[actionKey] += weight;
+      if (reason && cells[key].evidence.length < 2) cells[key].evidence.push(reason);
+      if (source) cells[key].source = source;
+    };
+
+    hypotheses.forEach(item => {
+      addEvidence(
+        inferWhat(item, 'setup'),
+        inferSeverity(item, 'violation'),
+        item.proposed_action,
+        item.rationale || item.path_key || item.classification,
+        'hypotheses',
+        4
+      );
+    });
+
+    discoveries.forEach(item => {
+      const explanation = String(item.explanation || '').toLowerCase();
+      const inferredAction = explanation.includes('delay')
+        ? 'delay'
+        : explanation.includes('buffer')
+          ? 'buffer'
+          : explanation.includes('retime')
+            ? 'retime'
+            : 'monitor';
+      addEvidence(
+        inferWhat(item, 'setup'),
+        inferSeverity(item, item.outcomeType === 'gap' ? 'margin' : 'violation'),
+        inferredAction,
+        item.explanation || item.candidateId,
+        'intelligence',
+        3
+      );
+    });
+
+    outcomes.forEach(item => {
+      const fallbackKey = `${inferWhat(item, 'setup')}-${inferSeverity(item, 'violation')}`;
+      addEvidence(
+        inferWhat(item, 'setup'),
+        inferSeverity(item, 'violation'),
+        summary && summary.top_proposed_actions && summary.top_proposed_actions[0]
+          ? summary.top_proposed_actions[0].proposed_action
+          : defaults[fallbackKey].action,
+        item.path_key || item.outcome,
+        'outcomes',
+        2
+      );
+    });
+
+    return cells;
+  }
+
+  function chooseCubeHighlight(summary, cells) {
+    const critical = Number(summary && summary.total_critical_paths || 0);
+    const blocking = Number(summary && summary.blocking_paths_count || 0);
+    const regress = Number(summary && summary.regressed_count || 0);
+    if (critical > 0) return 'setup-critical';
+    if (blocking > 0 || regress > 0) return 'hold-violation';
+
+    let bestKey = 'setup-margin';
+    let bestScore = -1;
+    Object.entries(cells).forEach(([key, cell]) => {
+      const score = Object.values(cell.actionScores).reduce((sum, value) => sum + value, 0);
+      if (score > bestScore) {
+        bestKey = key;
+        bestScore = score;
+      }
+    });
+    return bestKey;
+  }
+
+  function renderChipCube() {
+    const container = document.getElementById('chip-cube-container');
+    if (!container) return;
+
+    const rows = ['setup', 'hold', 'power'];
+    const columns = ['margin', 'violation', 'critical'];
+    const rowLabels = { setup: 'Setup', hold: 'Hold', power: 'Power' };
+    const columnLabels = { margin: 'Margin', violation: 'Violation', critical: 'Critical' };
+
+    const cells = buildCubeEvidence(
+      chipCubeState.summary,
+      chipCubeState.hypotheses,
+      chipCubeState.discoveries,
+      chipCubeState.outcomes
+    );
+    const highlightedKey = chooseCubeHighlight(chipCubeState.summary, cells);
+
+    let html = `
+      <div class="cube-axes">
+        <div class="cube-axis-corner">assen<strong>WHAT × SEVERITY</strong></div>
+        ${columns.map(column => `
+          <div class="cube-column-label">severity<strong>${columnLabels[column]}</strong></div>
+        `).join('')}
+    `;
+
+    rows.forEach(row => {
+      html += `<div class="cube-row-label">what<strong>${rowLabels[row]}</strong></div>`;
+      columns.forEach(column => {
+        const key = `${row}-${column}`;
+        const cell = cells[key];
+        const winningAction = Object.entries(cell.actionScores).sort((a, b) => b[1] - a[1])[0][0];
+        const evidence = cell.evidence[0] || cell.reason;
+        html += `
+          <div class="cube-cell ${key === highlightedKey ? 'is-highlight' : ''}">
+            <div class="cube-cell-head">
+              <span>${rowLabels[row]} / ${columnLabels[column]}</span>
+              <span class="cube-chip-tag">${key === highlightedKey ? 'meest urgent' : 'dominant'}</span>
+            </div>
+            <div class="cube-chip-label">${shortActionLabel(winningAction)}</div>
+            <div class="cube-chip-meta">ACTION ${shortActionLabel(winningAction)} · bron ${escapeHtml(cell.source)}</div>
+            <div class="cube-chip-reason">${escapeHtml(evidence)}</div>
+          </div>
+        `;
+      });
+    });
+
+    html += `</div>
+      <div class="cube-note">Voor nu gebruikt SafeClash live learning- en intelligence-signalen om elke cel deterministisch te vullen wanneer specifieke 3×3×3 cube-data nog beperkt is.</div>`;
+
+    container.innerHTML = html;
+  }
+
+  function renderChipIntelligence(discoveries) {
+    const container = document.getElementById('chip-intelligence-container');
+    if (!discoveries.length) {
+      container.innerHTML = '<div class="loading">Geen chip discoveries gevonden.</div>';
+      return;
+    }
+    container.innerHTML = `<div class="intel-list">${discoveries.slice(0, 5).map(item => `
+      <div class="intel-card">
+        <div class="intel-id">${item.candidateId || 'unknown-candidate'}</div>
+        <div class="intel-explanation">${item.explanation || 'Geen uitleg beschikbaar.'}</div>
+        <div class="intel-meta"><span class="intel-type">Type: ${item.outcomeType || '—'}</span></div>
+        <div class="intel-meta"><span class="intel-score">Score: ${typeof item.score === 'number' ? item.score.toFixed(2) : '—'}</span></div>
+      </div>
+    `).join('')}</div>`;
+  }
+
   // Load data
   fetchSignals();
   fetchGaps();
   fetchChipLearning();
+  fetchChipIntelligence();
 </script>
 </body>
 </html>

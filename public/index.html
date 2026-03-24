@@ -6,7 +6,7 @@
   <title>SafeClash — What remains after every decision</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after {
       margin: 0;
@@ -14,10 +14,26 @@
       box-sizing: border-box;
     }
 
+    :root {
+      --paper: #f5f3ee;
+      --surface: #ffffff;
+      --surface-soft: #fbfaf7;
+      --ink: #18221c;
+      --muted: #5f6f65;
+      --rule: #d6ddd4;
+      --accent: #2e7d4f;
+      --accent-soft: #4caf78;
+      --shadow-soft: 0 20px 50px rgba(24, 34, 28, 0.06);
+      --serif: 'EB Garamond', Georgia, serif;
+      --mono: 'JetBrains Mono', monospace;
+    }
+
     body {
-      background: #0a0a0f;
-      color: #e8e8e8;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(76,175,120,0.08), transparent 28%),
+        linear-gradient(180deg, #f8f6f1 0%, var(--paper) 100%);
+      color: var(--ink);
+      font-family: var(--serif);
       font-size: 16px;
       line-height: 1.7;
       -webkit-font-smoothing: antialiased;
@@ -37,21 +53,22 @@
 
     .hero h1 {
       font-size: 48px;
-      font-weight: 300;
+      font-weight: 400;
       letter-spacing: 0.08em;
       margin-bottom: 24px;
-      color: #e8e8e8;
+      color: var(--ink);
     }
 
     .hero .tagline {
       font-size: 20px;
-      font-weight: 300;
-      color: #c8a96e;
+      font-weight: 400;
+      color: var(--accent);
       margin-bottom: 56px;
+      font-family: var(--mono);
     }
 
     .hero .description p {
-      color: #666680;
+      color: var(--muted);
       font-size: 16px;
       line-height: 1.7;
       max-width: 480px;
@@ -61,7 +78,7 @@
     /* Columns */
     .columns-section {
       padding: 100px 0;
-      border-top: 1px solid rgba(200, 169, 110, 0.12);
+      border-top: 1px solid var(--rule);
     }
 
     .columns {
@@ -75,28 +92,39 @@
       font-weight: 500;
       letter-spacing: 0.15em;
       text-transform: uppercase;
-      color: #c8a96e;
+      color: var(--accent);
       margin-bottom: 20px;
+      font-family: var(--mono);
     }
 
     .column p {
-      color: #666680;
+      color: var(--muted);
       font-size: 15px;
       line-height: 1.7;
+    }
+
+    .column {
+      padding: 28px;
+      border: 1px solid var(--rule);
+      background: var(--surface);
+      box-shadow: var(--shadow-soft);
     }
 
     /* For whom */
     .audience-section {
       padding: 100px 0;
-      border-top: 1px solid rgba(200, 169, 110, 0.12);
+      border-top: 1px solid var(--rule);
     }
 
     .audience p {
-      color: #e8e8e8;
+      color: var(--ink);
       font-size: 16px;
       line-height: 1.7;
       max-width: 520px;
       margin-bottom: 32px;
+      padding: 20px 24px;
+      border: 1px solid var(--rule);
+      background: var(--surface-soft);
     }
 
     .audience p:last-child {
@@ -106,7 +134,7 @@
     /* CTA */
     .cta-section {
       padding: 100px 0 140px;
-      border-top: 1px solid rgba(200, 169, 110, 0.12);
+      border-top: 1px solid var(--rule);
       display: flex;
       justify-content: center;
       gap: 24px;
@@ -116,21 +144,22 @@
     .btn {
       display: inline-block;
       padding: 14px 32px;
-      font-family: 'Inter', system-ui, sans-serif;
+      font-family: var(--mono);
       font-size: 14px;
       font-weight: 500;
       letter-spacing: 0.04em;
       text-decoration: none;
-      border: 1px solid rgba(200, 169, 110, 0.4);
-      color: #c8a96e;
-      background: transparent;
+      border: 1px solid rgba(46, 125, 79, 0.26);
+      color: var(--accent);
+      background: var(--surface);
       cursor: pointer;
       transition: border-color 0.2s, background 0.2s;
+      box-shadow: var(--shadow-soft);
     }
 
     .btn:hover {
-      border-color: #c8a96e;
-      background: rgba(200, 169, 110, 0.06);
+      border-color: var(--accent-soft);
+      background: rgba(76,175,120,0.06);
     }
 
     /* Responsive */
