@@ -296,6 +296,27 @@
       gap: 0.6rem 1.2rem;
     }
 
+    .learning-explainer {
+      border: 1px solid var(--rule);
+      padding: 1rem 1.1rem;
+      background: rgba(46,125,79,0.05);
+    }
+
+    .learning-explainer-title {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--green-bright);
+      margin-bottom: 0.5rem;
+    }
+
+    .learning-explainer-text {
+      font-size: 0.92rem;
+      line-height: 1.55;
+      color: var(--paper);
+    }
+
     /* LIVE INDICATOR */
     .live-dot {
       display: inline-block; width: 8px; height: 8px;
@@ -430,6 +451,10 @@
   <div class="section-label">Chip Learning</div>
   <h2>Recente runs, outcomes en hypotheses</h2>
   <div class="learning-grid">
+    <div class="learning-card full">
+      <h3>Wat is er verbeterd?</h3>
+      <div id="chip-explainer-container" class="loading">Laden van chip-verbetering ...</div>
+    </div>
     <div class="learning-card">
       <h3>Learning Summary</h3>
       <div id="chip-summary-container" class="loading">Laden van /api/proxy/chip/summary ...</div>
@@ -519,10 +544,66 @@
     const outcomes = results.find(r => r.key === 'outcomes');
     const hypotheses = results.find(r => r.key === 'hypotheses');
 
+    renderChipExplainer(
+      runs && runs.ok ? (runs.data.runs || []) : [],
+      summary && summary.ok ? summary.data : null,
+      (runs && !runs.ok ? runs.error : null) || (summary && !summary.ok ? summary.error : null)
+    );
     renderChipSummary(summary && summary.ok ? summary.data : null, summary && !summary.ok ? summary.error : null);
     renderChipRuns(runs && runs.ok ? (runs.data.runs || []) : [], runs && !runs.ok ? runs.error : null);
     renderChipOutcomes(outcomes && outcomes.ok ? (outcomes.data.outcomes || []) : [], outcomes && !outcomes.ok ? outcomes.error : null);
     renderChipHypotheses(hypotheses && hypotheses.ok ? (hypotheses.data.hypotheses || []) : [], hypotheses && !hypotheses.ok ? hypotheses.error : null);
+  }
+
+  function actionLabel(action) {
+    const labels = {
+      'retime_or_buffer': 'retiming en buffer-optimalisatie',
+      'buffer_or_resize': 'buffers en cel-optimalisatie',
+      'insert_delay_or_buffer': 'extra vertraging of buffers',
+      'monitor_margin': 'marge bewaken'
+    };
+    return labels[action] || 'verdere timing-optimalisatie';
+  }
+
+  function renderChipExplainer(runs, summary, error) {
+    const container = document.getElementById('chip-explainer-container');
+    if (error) {
+      container.innerHTML = `<div class="error-msg">Kan chip-verbetering niet laden: ${error}</div>`;
+      return;
+    }
+    if (!summary || runs.length < 2) {
+      container.innerHTML = '<div class="loading">Nog niet genoeg chip-data voor een vergelijking.</div>';
+      return;
+    }
+
+    const latestRun = runs[0] || {};
+    const previousRun = runs[1] || {};
+    const latestViolations = Number(latestRun.violation_count || 0);
+    const previousViolations = Number(previousRun.violation_count || 0);
+    const latestCritical = Number(latestRun.critical_count || 0);
+    const previousCritical = Number(previousRun.critical_count || 0);
+    const improvedCount = Number(summary.improved_count || 0);
+    const regressedCount = Number(summary.regressed_count || 0);
+    const topAction = summary.top_proposed_actions && summary.top_proposed_actions[0]
+      ? actionLabel(summary.top_proposed_actions[0].proposed_action)
+      : 'verdere timing-optimalisatie';
+
+    const regressionText = regressedCount === 0
+      ? 'geen regressies'
+      : `${regressedCount} regress${regressedCount === 1 ? 'ie' : 'ies'}`;
+
+    container.innerHTML = `<div class="learning-explainer">
+      <div class="learning-explainer-title">Wat is er verbeterd?</div>
+      <div class="learning-explainer-text">
+        De chip is verbeterd.<br>
+        ${latestViolations} violations (was ${previousViolations})<br>
+        ${latestCritical} kritieke paden (was ${previousCritical})<br><br>
+        ${improvedCount} paden zijn verbeterd<br>
+        ${regressionText}<br><br>
+        Beste aanpak:<br>
+        ${topAction}
+      </div>
+    </div>`;
   }
 
   function renderSignals(signals) {
