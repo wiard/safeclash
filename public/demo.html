@@ -317,6 +317,43 @@
       color: var(--paper);
     }
 
+    .delta-list {
+      display: grid;
+      gap: 0.45rem;
+      margin: 0.2rem 0 0.85rem;
+    }
+
+    .delta-row {
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      color: var(--paper);
+      line-height: 1.5;
+    }
+
+    .impact-line {
+      font-family: var(--mono);
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--green-bright);
+      margin: 0 0 0.75rem;
+    }
+
+    .result-summary {
+      font-family: var(--mono);
+      font-size: 0.76rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 0.8rem;
+    }
+
+    .best-action {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--paper);
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
     /* LIVE INDICATOR */
     .live-dot {
       display: inline-block; width: 8px; height: 8px;
@@ -565,6 +602,21 @@
     return labels[action] || 'verdere timing-optimalisatie';
   }
 
+  function formatDelta(prev, curr, label) {
+    const improved = curr < prev;
+    const unchanged = curr === prev;
+    const currColor = improved ? '#2e7d32' : (unchanged ? '#999' : '#cf4444');
+    const currIcon = improved ? '🟢' : (unchanged ? '⚪' : '🔴');
+    return `
+      <div class="delta-row">
+        <span style="color:#c33;">🔴 ${prev}</span>
+        <span style="color:#999;padding:0 0.35rem;">→</span>
+        <span style="color:${currColor};">${currIcon} ${curr}</span>
+        <span style="color:#d7ddd7;">${label}</span>
+      </div>
+    `;
+  }
+
   function renderChipExplainer(runs, summary, error) {
     const container = document.getElementById('chip-explainer-container');
     if (error) {
@@ -591,17 +643,23 @@
     const regressionText = regressedCount === 0
       ? 'geen regressies'
       : `${regressedCount} regress${regressedCount === 1 ? 'ie' : 'ies'}`;
+    const showImpact = improvedCount > 0 || latestViolations < previousViolations;
+    const unchangedCount = Number(summary.unchanged_count || 0);
 
     container.innerHTML = `<div class="learning-explainer">
       <div class="learning-explainer-title">Wat is er verbeterd?</div>
       <div class="learning-explainer-text">
-        De chip is verbeterd.<br>
-        ${latestViolations} violations (was ${previousViolations})<br>
-        ${latestCritical} kritieke paden (was ${previousCritical})<br><br>
-        ${improvedCount} paden zijn verbeterd<br>
-        ${regressionText}<br><br>
-        Beste aanpak:<br>
-        ${topAction}
+        <div class="delta-list">
+          ${formatDelta(previousViolations, latestViolations, latestViolations === 1 ? 'violation' : 'violations')}
+          ${formatDelta(previousCritical, latestCritical, 'kritieke paden')}
+        </div>
+        ${showImpact ? '<div class="impact-line">De chip is aantoonbaar verbeterd</div>' : ''}
+        <div class="result-summary">
+          <strong style="color:#2e7d32;">+${improvedCount} verbeterd</strong><br>
+          <span style="color:${regressedCount === 0 ? '#d7ddd7' : '#cf4444'};">${regressionText}</span>
+          ${unchangedCount > 0 ? `<br><span style="color:#999;">${unchangedCount} ongewijzigd</span>` : ''}
+        </div>
+        <div class="best-action">👉 Beste aanpak:<br>${topAction}</div>
       </div>
     </div>`;
   }
